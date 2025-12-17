@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { authService } from './auth.service';
-import { ApiResponse } from '@/types';
+import { ApiResponse } from '@/app/types';
 
 export class AuthController {
     

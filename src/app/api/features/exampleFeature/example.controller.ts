@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { exampleService } from './example.service';
-import { ApiResponse } from '@/types';
+import { ApiResponse } from '@/app/types';
 
 export class ExampleController {
     

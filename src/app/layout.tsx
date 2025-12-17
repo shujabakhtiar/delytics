@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import ThemeRegistry from '@/providers/ThemeRegistry';
-import Navbar from '@/app/components/layout/Navbar';
+import ThemeRegistry from '@/app/ui/providers/ThemeRegistry';
+import Navbar from '@/app/ui/layout/Navbar';
 
 export const metadata: Metadata = {
   title: 'Delytics - Smarter Delivery Management',

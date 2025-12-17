@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { User } from '@/types'; // Assuming User type exists, we might need to extend it for Auth
+import { User } from '@/app/types'; // Assuming User type exists, we might need to extend it for Auth
 import { cookies } from 'next/headers';
 
 // Mock database for demonstration

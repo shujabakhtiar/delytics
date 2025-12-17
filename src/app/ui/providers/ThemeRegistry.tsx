@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import { getTheme } from '@/styles/theme';
+import { getTheme } from '@/app/ui/styles/theme';
 
 export const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
