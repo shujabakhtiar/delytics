@@ -1,5 +1,5 @@
-import { authRouter } from '@/features/auth/auth.routes';
-import { exampleRouter } from '@/features/exampleFeature/example.routes';
+import { authRouter } from '@/app/api/features/auth/auth.routes';
+import { exampleRouter } from '@/app/api/features/exampleFeature/example.routes';
 import { NextRequest, NextResponse } from 'next/server';
 
 async function handler(req: NextRequest, { params }: { params: Promise<{ slug: string[] }> }) {
