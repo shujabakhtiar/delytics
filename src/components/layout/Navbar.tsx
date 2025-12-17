@@ -11,7 +11,7 @@ import Container from '@mui/material/Container';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useTheme } from '@mui/material/styles';
-import { ColorModeContext } from './ThemeRegistry';
+import { ColorModeContext } from '@/providers/ThemeRegistry';
 
 export default function Navbar() {
   const theme = useTheme();
