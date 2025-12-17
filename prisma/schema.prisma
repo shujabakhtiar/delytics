@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,14 +6,198 @@ datasource db {
   provider = "postgresql"
 }
 
-// Example User model
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  role      String   @default("user")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Tenant {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  regions   Region[]
+  users     User[]
+  hubs      Hub[]
+  agents    Agent[]
+  deliveries Delivery[]
+  dashboards Dashboard[]
+  exports   Export[]
+}
 
-  @@map("users")
+model Region {
+  id        String    @id @default(uuid())
+  tenantId  String
+  name      String
+  timezone  String
+  createdAt DateTime  @default(now())
+  
+  tenant      Tenant       @relation(fields: [tenantId], references: [id])
+  hubs        Hub[]
+  agents      Agent[]
+  deliveries  Delivery[]
+  userRegions UserRegion[]
+  dashboards  Dashboard[]
+  exports     Export[]
+
+  @@index([tenantId])
+  @@index([name])
+}
+
+model User {
+  id           String       @id @default(uuid())
+  tenantId     String
+  email        String       @unique
+  passwordHash String
+  role         String
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+
+  tenant      Tenant        @relation(fields: [tenantId], references: [id])
+  userRegions UserRegion[]
+  dashboards  Dashboard[]   @relation("DashboardCreator")
+  exports     Export[]
+  auditLogs   AuditLog[]
+
+  @@index([tenantId, role])
+  @@index([isActive])
+}
+
+model UserRegion {
+  userId   String
+  regionId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  region Region @relation(fields: [regionId], references: [id])
+
+  @@id([userId, regionId])
+  @@index([regionId])
+}
+
+model Hub {
+  id        String    @id @default(uuid())
+  tenantId  String
+  regionId  String
+  name      String
+  capacity  Int
+  createdAt DateTime  @default(now())
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  region   Region   @relation(fields: [regionId], references: [id])
+  agents   Agent[]
+  deliveries Delivery[]
+
+  @@index([tenantId])
+  @@index([regionId])
+  @@index([name])
+}
+
+model Agent {
+  id        String    @id @default(uuid())
+  tenantId  String
+  regionId  String
+  hubId     String
+  status    String
+  createdAt DateTime  @default(now())
+
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  region    Region   @relation(fields: [regionId], references: [id])
+  hub       Hub      @relation(fields: [hubId], references: [id])
+  deliveries Delivery[]
+
+  @@index([tenantId])
+  @@index([regionId])
+  @@index([hubId])
+  @@index([status])
+}
+
+model Delivery {
+  id                  String   @id @default(uuid())
+  tenantId            String
+  regionId            String
+  hubId               String
+  agentId             String
+  status              String
+  deliveryTimeMinutes Int
+  slaBreached         Boolean
+  deliveredAt         DateTime
+  createdAt           DateTime @default(now())
+
+  tenant  Tenant @relation(fields: [tenantId], references: [id])
+  region  Region @relation(fields: [regionId], references: [id])
+  hub     Hub    @relation(fields: [hubId], references: [id])
+  agent   Agent  @relation(fields: [agentId], references: [id])
+
+  @@index([tenantId])
+  @@index([regionId])
+  @@index([hubId])
+  @@index([agentId])
+  @@index([status])
+  @@index([slaBreached])
+  @@index([deliveredAt])
+}
+
+model Dashboard {
+  id        String    @id @default(uuid())
+  tenantId  String
+  regionId  String?
+  createdBy String
+  name      String
+  isShared  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  tenant      Tenant @relation(fields: [tenantId], references: [id])
+  region      Region? @relation(fields: [regionId], references: [id])
+  creator     User   @relation("DashboardCreator", fields: [createdBy], references: [id])
+  widgets     DashboardWidget[]
+
+  @@index([tenantId])
+  @@index([regionId])
+  @@index([createdBy])
+  @@index([isShared])
+}
+
+model DashboardWidget {
+  id           String   @id @default(uuid())
+  dashboardId  String
+  type         String
+  queryConfig  Json
+  visualConfig Json
+  position     Int
+
+  dashboard Dashboard @relation(fields: [dashboardId], references: [id])
+
+  @@index([dashboardId])
+  @@index([type])
+}
+
+model Export {
+  id        String   @id @default(uuid())
+  userId    String
+  tenantId  String
+  regionId  String
+  filters   Json
+  status    String
+  fileUrl   String
+  createdAt DateTime @default(now())
+
+  user    User   @relation(fields: [userId], references: [id])
+  tenant  Tenant @relation(fields: [tenantId], references: [id])
+  region  Region @relation(fields: [regionId], references: [id])
+
+  @@index([tenantId])
+  @@index([regionId])
+  @@index([userId])
+  @@index([status])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  entity    String
+  entityId  String
+  metadata  Json
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entity])
+  @@index([entityId])
+  @@index([createdAt])
 }

@@ -11,8 +11,9 @@ export async function GET() {
       select: {
         id: true,
         email: true,
-        name: true,
         role: true,
+        isActive: true,
+        tenantId: true,
         createdAt: true,
       },
       orderBy: {
@@ -42,13 +43,13 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, name, role } = body;
+    const { email, tenantId, passwordHash, role } = body;
 
-    if (!email) {
+    if (!email || !tenantId || !passwordHash) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Email is required',
+          error: 'Email, tenantId, and passwordHash are required',
         },
         { status: 400 }
       );
@@ -57,7 +58,8 @@ export async function POST(request: Request) {
     const user = await prisma.user.create({
       data: {
         email,
-        name,
+        tenantId,
+        passwordHash,
         role: role || 'user',
       },
     });
