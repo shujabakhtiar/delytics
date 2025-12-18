@@ -7,7 +7,7 @@ datasource db {
 }
 
 model Tenant {
-  id        String    @id @default(uuid())
+  id        Int    @id @default(autoincrement())
   name      String
   createdAt DateTime  @default(now())
   regions   Region[]
@@ -20,8 +20,8 @@ model Tenant {
 }
 
 model Region {
-  id        String    @id @default(uuid())
-  tenantId  String
+  id        Int    @id @default(autoincrement())
+  tenantId  Int
   name      String
   timezone  String
   createdAt DateTime  @default(now())
@@ -39,17 +39,17 @@ model Region {
 }
 
 model User {
-  id           String       @id @default(uuid())
-  tenantId     String
-  email        String       @unique
+  id           Int       @id @default(autoincrement())
+  tenantId     Int
+  email        String    @unique
   passwordHash String
   role         String
-  isActive     Boolean      @default(true)
-  createdAt    DateTime     @default(now())
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
 
-  tenant      Tenant        @relation(fields: [tenantId], references: [id])
+  tenant      Tenant     @relation(fields: [tenantId], references: [id])
   userRegions UserRegion[]
-  dashboards  Dashboard[]   @relation("DashboardCreator")
+  dashboards  Dashboard[] @relation("DashboardCreator")
   exports     Export[]
   auditLogs   AuditLog[]
 
@@ -58,8 +58,8 @@ model User {
 }
 
 model UserRegion {
-  userId   String
-  regionId String
+  userId   Int
+  regionId Int
 
   user   User   @relation(fields: [userId], references: [id])
   region Region @relation(fields: [regionId], references: [id])
@@ -69,9 +69,9 @@ model UserRegion {
 }
 
 model Hub {
-  id        String    @id @default(uuid())
-  tenantId  String
-  regionId  String
+  id        Int    @id @default(autoincrement())
+  tenantId  Int
+  regionId  Int
   name      String
   capacity  Int
   createdAt DateTime  @default(now())
@@ -87,10 +87,10 @@ model Hub {
 }
 
 model Agent {
-  id        String    @id @default(uuid())
-  tenantId  String
-  regionId  String
-  hubId     String
+  id        Int    @id @default(autoincrement())
+  tenantId  Int
+  regionId  Int
+  hubId     Int
   status    String
   createdAt DateTime  @default(now())
 
@@ -106,11 +106,11 @@ model Agent {
 }
 
 model Delivery {
-  id                  String   @id @default(uuid())
-  tenantId            String
-  regionId            String
-  hubId               String
-  agentId             String
+  id                  Int      @id @default(autoincrement())
+  tenantId            Int
+  regionId            Int
+  hubId               Int
+  agentId             Int
   status              String
   deliveryTimeMinutes Int
   slaBreached         Boolean
@@ -132,17 +132,17 @@ model Delivery {
 }
 
 model Dashboard {
-  id        String    @id @default(uuid())
-  tenantId  String
-  regionId  String?
-  createdBy String
+  id        Int      @id @default(autoincrement())
+  tenantId  Int
+  regionId  Int?
+  createdBy Int
   name      String
-  isShared  Boolean   @default(false)
-  createdAt DateTime  @default(now())
+  isShared  Boolean  @default(false)
+  createdAt DateTime @default(now())
 
-  tenant      Tenant @relation(fields: [tenantId], references: [id])
-  region      Region? @relation(fields: [regionId], references: [id])
-  creator     User   @relation("DashboardCreator", fields: [createdBy], references: [id])
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  region      Region?  @relation(fields: [regionId], references: [id])
+  creator     User     @relation("DashboardCreator", fields: [createdBy], references: [id])
   widgets     DashboardWidget[]
 
   @@index([tenantId])
@@ -152,8 +152,8 @@ model Dashboard {
 }
 
 model DashboardWidget {
-  id           String   @id @default(uuid())
-  dashboardId  String
+  id           Int      @id @default(autoincrement())
+  dashboardId  Int
   type         String
   queryConfig  Json
   visualConfig Json
@@ -166,10 +166,10 @@ model DashboardWidget {
 }
 
 model Export {
-  id        String   @id @default(uuid())
-  userId    String
-  tenantId  String
-  regionId  String
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  tenantId  Int
+  regionId  Int
   filters   Json
   status    String
   fileUrl   String
@@ -186,11 +186,11 @@ model Export {
 }
 
 model AuditLog {
-  id        String   @id @default(uuid())
-  userId    String
+  id        Int      @id @default(autoincrement())
+  userId    Int
   action    String
   entity    String
-  entityId  String
+  entityId  Int
   metadata  Json
   createdAt DateTime @default(now())
 

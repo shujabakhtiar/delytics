@@ -18,7 +18,7 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(password, 10);
         
         const newUser: User = {
-            id: Math.random().toString(36).substr(2, 9),
+            id: Math.floor(Math.random() * 1000000),
             name,
             email,
             role: 'user', // Default role

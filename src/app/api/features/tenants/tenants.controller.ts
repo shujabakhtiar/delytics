@@ -7,13 +7,22 @@ export class TenantController {
     async getTenant(req: Request): Promise<NextResponse<ApiResponse<any>>> {
         try {
             const { searchParams } = new URL(req.url);
-            const id = searchParams.get('id');
+            const idStr = searchParams.get('id');
 
-            if (!id) {
+            if (!idStr) {
                 return NextResponse.json({
                     success: false,
                     data: null,
                     error: 'ID is required'
+                }, { status: 400 });
+            }
+
+            const id = Number(idStr);
+            if (isNaN(id)) {
+                return NextResponse.json({
+                    success: false,
+                    data: null,
+                    error: 'Invalid ID format'
                 }, { status: 400 });
             }
 

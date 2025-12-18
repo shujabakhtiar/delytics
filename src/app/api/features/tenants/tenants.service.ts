@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma';
 
 export class TenantService {
-    async getTenants(id: string): Promise<any> {
+    async getTenants(id: number): Promise<any> {
         const tenant = await prisma.tenant.findUnique({
             where: { id }
         });
