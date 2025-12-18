@@ -1,10 +1,25 @@
+import prisma from '@/lib/prisma';
+
 export class TenantService {
-    getTenants(): string {
-        return "Yo a happy person yoo";
+    async getTenants(id: string): Promise<any> {
+        const tenant = await prisma.tenant.findUnique({
+            where: { id }
+        });
+        return tenant;
     }
-    
-    getAllTenants(): string {
-        return "Ssup bitches"
+
+    async getAllTenants(): Promise<any> {
+        const tenants = await prisma.tenant.findMany();
+        return tenants;
+    }
+
+    async createTenant(name: string): Promise<any> {
+        const tenant = await prisma.tenant.create({
+            data: {
+                name
+            }
+        });
+        return tenant;
     }
 }
 

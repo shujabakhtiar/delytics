@@ -11,14 +11,16 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ slug: s
     
     const [feature, action] = slug;
 
-    if (!feature || !action) {
+    if (!feature) {
         return new NextResponse('Bad Request', { status: 400 });
     }
 
     switch (feature) {
         case 'auth':
+            if (!action) return new NextResponse('Action Required', { status: 400 });
             return authRouter(req, { action });
         case 'example':
+            if (!action) return new NextResponse('Action Required', { status: 400 });
             return exampleRouter(req, { action });
         case 'tenant':
             return tenantRouter(req, { action });
