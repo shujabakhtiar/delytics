@@ -11,5 +11,10 @@ export async function tenantRouter(req: Request, params: { action: string }) {
         return tenantController.getTenant(req);
     }
 
+    // GET /api/tenant/all
+    if (req.method === 'GET' && action === 'all') {
+        return tenantController.getAllTenant(req);
+    }
+
     return new Response('Not Found', { status: 404 });
 }
