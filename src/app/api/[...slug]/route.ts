@@ -2,6 +2,9 @@ import { authRouter } from '@/app/api/features/auth/auth.routes';
 import { exampleRouter } from '@/app/api/features/exampleFeature/example.routes';
 import { NextRequest, NextResponse } from 'next/server';
 import { tenantRouter } from '@/app/api/features/tenants/tenants.routes';
+import { regionRouter } from '@/app/api/features/region/region.route';
+import { hubRouter } from '../features/hub/hubs.routes';
+import { agentRouter } from '../features/agents/agents.route';
 
 async function handler(req: NextRequest, { params }: { params: Promise<{ slug: string[] }> }) {
     const { slug } = await params;
@@ -24,6 +27,12 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ slug: s
             return exampleRouter(req, { action });
         case 'tenant':
             return tenantRouter(req, { action });
+        case 'region':
+            return regionRouter(req);
+        case 'hub':
+            return hubRouter(req);
+        case 'agent':
+            return agentRouter(req);
         default:
             return new NextResponse('Feature Not Found', { status: 404 });
     }
