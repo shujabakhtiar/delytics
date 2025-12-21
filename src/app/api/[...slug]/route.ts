@@ -5,6 +5,11 @@ import { tenantRouter } from '@/app/api/features/tenants/tenants.routes';
 import { regionRouter } from '@/app/api/features/region/region.route';
 import { hubRouter } from '../features/hub/hubs.routes';
 import { agentRouter } from '../features/agents/agents.route';
+import { deliveryRouter } from '../features/deliveries/deliveries.route';
+import { dashboardRouter } from '../features/dashboards/dashboards.route';
+import { dashboardWidgetRouter } from '../features/dashboard-widgets/dashboard-widgets.route';
+import { exportRouter } from '../features/exports/exports.route';
+import { auditLogRouter } from '../features/audit-logs/audit-logs.route';
 
 async function handler(req: NextRequest, { params }: { params: Promise<{ slug: string[] }> }) {
     const { slug } = await params;
@@ -33,6 +38,16 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ slug: s
             return hubRouter(req);
         case 'agent':
             return agentRouter(req);
+        case 'delivery':
+            return deliveryRouter(req);
+        case 'dashboard':
+            return dashboardRouter(req);
+        case 'dashboard-widget':
+            return dashboardWidgetRouter(req);
+        case 'export':
+            return exportRouter(req);
+        case 'audit-log':
+            return auditLogRouter(req);
         default:
             return new NextResponse('Feature Not Found', { status: 404 });
     }

@@ -100,8 +100,9 @@ export const getTheme = (mode: 'light' | 'dark'): ThemeOptions => ({
                   boxShadow: 'none',
                   borderBottom: `1px solid ${mode === 'light' ? '#E5E7EB' : '#374151'}`,
                   color: mode === 'light' ? '#111827' : '#F9FAFB',
+                  zIndex: 1300, // Higher than Drawer (1200)
               }
           }
-      }
+      },
   }
 });
