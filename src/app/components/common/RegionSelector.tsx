@@ -9,7 +9,7 @@ export default function RegionSelector() {
       setRegion(event.target.value as string);
     };
     return (
-        <FormControl variant="standard" sx={{ m: 1, minWidth: 170 }}>
+        <FormControl variant="standard" sx={{ m: 1, minWidth: 170}}>
         <InputLabel id="demo-simple-select-standard-label">Region</InputLabel>
         <Select
           labelId="demo-simple-select-standard-label"

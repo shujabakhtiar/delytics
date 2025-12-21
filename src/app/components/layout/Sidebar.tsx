@@ -102,13 +102,13 @@ export default function Sidebar() {
 
           <Collapse in={openMenus.analytics} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItemButton sx={{ pl: 4 }}>
+              <ListItemButton component={Link} href="/analytics/deliveries" sx={{ pl: 4 }}>
                 <ListItemText primary="Deliveries" />
               </ListItemButton>
-              <ListItemButton sx={{ pl: 4 }}>
+              <ListItemButton component={Link} href="/analytics/agents" sx={{ pl: 4 }}>
                 <ListItemText primary="Agents" />
               </ListItemButton>
-              <ListItemButton sx={{ pl: 4 }}>
+              <ListItemButton component={Link} href="/analytics/hubs" sx={{ pl: 4 }}>
                 <ListItemText primary="Hubs" />
               </ListItemButton>
             </List>
