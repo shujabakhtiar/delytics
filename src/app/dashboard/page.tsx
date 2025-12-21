@@ -71,7 +71,7 @@ export default function Dashboard() {
 
             <Grid container spacing={3}>
                 {/* KPI Row */}
-                <Grid item xs={12} sm={6} lg={3}>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                     <KpiCard 
                         title="Total Deliveries" 
                         value="1,284" 
@@ -80,7 +80,7 @@ export default function Dashboard() {
                         icon={<LocalShippingIcon />} 
                     />
                 </Grid>
-                <Grid item xs={12} sm={6} lg={3}>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                     <KpiCard 
                         title="SLA Compliance" 
                         value="94.2%" 
@@ -89,7 +89,7 @@ export default function Dashboard() {
                         icon={<AssessmentIcon />} 
                     />
                 </Grid>
-                <Grid item xs={12} sm={6} lg={3}>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                     <KpiCard 
                         title="Avg. Delivery Time" 
                         value="24.5 min" 
@@ -98,7 +98,7 @@ export default function Dashboard() {
                         icon={<SpeedIcon />} 
                     />
                 </Grid>
-                <Grid item xs={12} sm={6} lg={3}>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                     <KpiCard 
                         title="Active Hubs" 
                         value="12" 
@@ -108,7 +108,7 @@ export default function Dashboard() {
                 </Grid>
 
                 {/* Charts Section */}
-                <Grid item xs={12} lg={8}>
+                <Grid size={{ xs: 12, lg: 8 }}>
                     <Paper sx={{ p: 3, height: '400px', display: 'flex', flexDirection: 'column' }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
                             <Typography variant="h6">Deliveries Over Time</Typography>
@@ -137,7 +137,7 @@ export default function Dashboard() {
                     </Paper>
                 </Grid>
 
-                <Grid item xs={12} lg={4}>
+                <Grid size={{ xs: 12, lg: 4 }}>
                     <Paper sx={{ p: 3, height: '400px', display: 'flex', flexDirection: 'column' }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
                             <Typography variant="h6">Region vs SLA</Typography>
