@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   Box,
   Drawer,
@@ -76,7 +77,7 @@ export default function Sidebar() {
         <List>
 
           {/* Dashboard */}
-          <ListItemButton>
+          <ListItemButton component={Link} href="/dashboard">
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>

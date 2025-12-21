@@ -1,4 +1,6 @@
-import { Box } from "@mui/material";
+"use client";
+
+import { Box, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 
 export default function Dashboard() {
@@ -17,9 +19,9 @@ export default function Dashboard() {
         py: 8,
       }}
     >
-        <div>
-            <h1>Dashboard</h1>
-        </div>
+        <Typography variant="h1">
+            Dashboard
+        </Typography>
         </Box>
     );
 }
