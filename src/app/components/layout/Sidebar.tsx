@@ -15,8 +15,6 @@ import {
 } from "@mui/material";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ExpandLess from "@mui/icons-material/ExpandLess";
@@ -29,7 +27,7 @@ const drawerWidth = 260;
 export default function Sidebar() {
   const { isOpen, toggleSidebar } = useSidebar();
   const [openMenus, setOpenMenus] = React.useState({
-    deliveries: true,
+    dashboard: true,
     analytics: false,
   });
 
@@ -77,45 +75,23 @@ export default function Sidebar() {
         <List>
 
           {/* Dashboard */}
-          <ListItemButton component={Link} href="/dashboard">
+          <ListItemButton onClick={() => toggleMenu("dashboard")}>
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
+            {openMenus.dashboard ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
 
-          {/* Deliveries (with sub-menu) */}
-          <ListItemButton onClick={() => toggleMenu("deliveries")}>
-            <ListItemIcon>
-              <LocalShippingIcon />
-            </ListItemIcon>
-            <ListItemText primary="Deliveries" />
-            {openMenus.deliveries ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-
-          <Collapse in={openMenus.deliveries} timeout="auto" unmountOnExit>
+          <Collapse in={openMenus.dashboard} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItemButton sx={{ pl: 4 }}>
-                <ListItemText primary="All Deliveries" />
-              </ListItemButton>
-              <ListItemButton sx={{ pl: 4 }}>
-                <ListItemText primary="Pending" />
-              </ListItemButton>
-              <ListItemButton sx={{ pl: 4 }}>
-                <ListItemText primary="Completed" />
+              <ListItemButton component={Link} href="/dashboard" sx={{ pl: 4 }}>
+                <ListItemText primary="Overview" />
               </ListItemButton>
             </List>
           </Collapse>
 
-          {/* Drivers */}
-          <ListItemButton>
-            <ListItemIcon>
-              <PeopleIcon />
-            </ListItemIcon>
-            <ListItemText primary="Drivers" />
-          </ListItemButton>
-
-          {/* Analytics (with sub-menu) */}
+             {/* Analytics (with sub-menu) */}
           <ListItemButton onClick={() => toggleMenu("analytics")}>
             <ListItemIcon>
               <BarChartIcon />
@@ -127,14 +103,17 @@ export default function Sidebar() {
           <Collapse in={openMenus.analytics} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <ListItemButton sx={{ pl: 4 }}>
-                <ListItemText primary="Overview" />
+                <ListItemText primary="Deliveries" />
               </ListItemButton>
               <ListItemButton sx={{ pl: 4 }}>
-                <ListItemText primary="Performance" />
+                <ListItemText primary="Agents" />
+              </ListItemButton>
+              <ListItemButton sx={{ pl: 4 }}>
+                <ListItemText primary="Hubs" />
               </ListItemButton>
             </List>
           </Collapse>
-
+       
           {/* Settings */}
           <ListItemButton>
             <ListItemIcon>
