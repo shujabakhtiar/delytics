@@ -7,13 +7,13 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
 import { ColorModeContext } from '@/app/components/providers/ThemeRegistry';
 import { useSidebar } from '@/app/components/providers/SidebarProvider';
+import RegionSelector from '../common/RegionSelector';
 
 export default function Navbar() {
   const theme = useTheme();
@@ -52,19 +52,12 @@ export default function Navbar() {
         </Box>
 
         {/* Desktop Menu */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Button color="inherit" sx={{ fontWeight: 500 }}>Features</Button>
-          <Button color="inherit" sx={{ fontWeight: 500 }}>Pricing</Button>
-          <Button color="inherit" sx={{ fontWeight: 500 }}>About</Button>
-          
-          {/* Theme Toggle */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>  
+          <RegionSelector />
+           {/* Theme Toggle */}
           <IconButton sx={{ ml: 1 }} onClick={colorMode.toggleColorMode} color="inherit">
               {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-          
-          <Button variant="contained" color="primary" sx={{ ml: 2 }}>
-              Sign In
-          </Button>
         </Box>
       </Toolbar>
     </AppBar>
