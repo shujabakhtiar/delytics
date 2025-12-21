@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import ThemeRegistry from '@/app/ui/providers/ThemeRegistry';
-import Navbar from '@/app/ui/layout/Navbar';
-import Sidebar from './ui/layout/Sidebar';
-import { SidebarProvider } from '@/app/ui/providers/SidebarProvider';
+import ThemeRegistry from '@/app/components/providers/ThemeRegistry';
+import Navbar from '@/app/components/layout/Navbar';
+import Sidebar from '@/app/components/layout/Sidebar';
+import { SidebarProvider } from '@/app/components/providers/SidebarProvider';
 
 export const metadata: Metadata = {
   title: 'Delytics - Smarter Delivery Management',

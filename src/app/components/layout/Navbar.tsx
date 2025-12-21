@@ -12,8 +12,8 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
-import { ColorModeContext } from '@/app/ui/providers/ThemeRegistry';
-import { useSidebar } from '@/app/ui/providers/SidebarProvider';
+import { ColorModeContext } from '@/app/components/providers/ThemeRegistry';
+import { useSidebar } from '@/app/components/providers/SidebarProvider';
 
 export default function Navbar() {
   const theme = useTheme();
