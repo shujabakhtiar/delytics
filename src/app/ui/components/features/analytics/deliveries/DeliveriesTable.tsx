@@ -24,6 +24,7 @@ export default function DeliveriesTable() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +41,8 @@ export default function DeliveriesTable() {
 
       const response = await deliveriesResource.list(requestFilters as any);
       if (response.success) {
-        setDeliveries(response.data);
+        setDeliveries(response.data.items);
+        setTotalCount(response.data.meta.total);
       } else {
         throw new Error("Failed to fetch deliveries");
       }
@@ -90,7 +92,7 @@ export default function DeliveriesTable() {
         </Box>
       ) : (
         <PaginatedTable
-          totalCount={deliveries.length > 0 ? (deliveries.length < rowsPerPage ? page * rowsPerPage + deliveries.length : (page + 2) * rowsPerPage) : 0} // Placeholder until API provides totalCount
+          totalCount={totalCount}
           page={page}
           rowsPerPage={rowsPerPage}
           onPageChange={(_, newPage) => setPage(newPage)}

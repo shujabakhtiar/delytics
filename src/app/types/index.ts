@@ -10,3 +10,15 @@ export interface ApiResponse<T> {
     error?: string;
     success: boolean;
 }
+
+export interface PaginationMeta {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+}
+
+export interface PaginatedResponse<T> {
+    items: T[];
+    meta: PaginationMeta;
+}

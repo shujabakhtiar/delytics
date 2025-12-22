@@ -1,6 +1,7 @@
 import { ApiResponse } from "@/app/types";
 import { NextResponse } from "next/server";
-import { deliveryService } from "./deliveries.service";
+import { deliveryService, DeliveryFilters } from "./deliveries.service";
+import { getPaginationParams } from "../../utils/pagination";
 
 export class DeliveryController {
     async getDeliveryById(req: Request): Promise<NextResponse<ApiResponse<any>>> {
@@ -41,10 +42,28 @@ export class DeliveryController {
 
     async getAllDeliveries(req: Request): Promise<NextResponse<ApiResponse<any>>> {
         try {
-            const deliveries = await deliveryService.getAllDeliveries();
+            const { searchParams } = new URL(req.url);
+            
+            // Pagination
+            const pagination = getPaginationParams(searchParams);
+            
+            // Filters
+            const filters: DeliveryFilters = {
+                startDate: searchParams.get('startDate') || undefined,
+                endDate: searchParams.get('endDate') || undefined,
+                regionId: searchParams.get('regionId') ? Number(searchParams.get('regionId')) : undefined,
+                region: searchParams.get('region') || undefined,
+                hubId: searchParams.get('hubId') ? Number(searchParams.get('hubId')) : undefined,
+                hub: searchParams.get('hub') || undefined,
+                status: searchParams.get('status') || undefined,
+                slaBreached: (searchParams.get('slaBreached') === 'true' || searchParams.get('slaBreach') === 'true') ? true : 
+                             (searchParams.get('slaBreached') === 'false' || searchParams.get('slaBreach') === 'false') ? false : undefined
+            };
+
+            const result = await deliveryService.getAllDeliveries(filters, pagination);
             return NextResponse.json({
                 success: true,
-                data: deliveries,
+                data: result,
             });
         } catch (error: any) {
             return NextResponse.json({

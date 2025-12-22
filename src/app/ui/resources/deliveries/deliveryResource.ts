@@ -18,16 +18,40 @@ export interface Delivery {
 export interface DeliveryFilters {
   status?: string;
   regionId?: number;
+  region?: string;
+  hubId?: number;
+  hub?: string;
   agentId?: number;
+  startDate?: string;
+  endDate?: string;
+  slaBreach?: boolean | string;
   limit?: number;
   page?: number;
+}
+
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  meta: PaginationMeta;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  error?: string;
 }
 
 export const deliveriesResource = {
   // Get all deliveries with optional filtering
   list: (filters?: DeliveryFilters) => 
-    apiFetch<{ success: boolean; data: Delivery[] }>('/delivery', { 
-      params: filters as Record<string, string>,
+    apiFetch<ApiResponse<PaginatedResponse<Delivery>>>('/delivery', { 
+      params: filters as any,
     }),
 
   // Get a single delivery
