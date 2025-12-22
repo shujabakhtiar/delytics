@@ -1,32 +1,33 @@
 import { Stack, Box, Typography, Divider, Chip } from "@mui/material";
+import { Delivery } from "@/app/ui/resources/deliveries/deliveryResource";
 
-export default function DeliveriesSidepanel({selectedDelivery}: {selectedDelivery: any}) {
+export default function DeliveriesSidepanel({selectedDelivery}: {selectedDelivery: Delivery}) {
     return (
         <Stack spacing={3}>
                 <Box>
                   <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
-                    Region ID
+                    Region
                   </Typography>
                   <Typography variant="body1" sx={{ fontWeight: 500, mt: 0.5 }}>
-                    {selectedDelivery.regionId}
+                    {selectedDelivery.region?.name || `ID: ${selectedDelivery.regionId}`}
                   </Typography>
                 </Box>
 
                 <Box>
                   <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
-                    Agent ID
+                    Agent
                   </Typography>
                   <Typography variant="body1" sx={{ fontWeight: 500, mt: 0.5 }}>
-                    {selectedDelivery.agentId}
+                    {selectedDelivery.agent?.name || `ID: ${selectedDelivery.agentId}`}
                   </Typography>
                 </Box>
 
                 <Box>
                   <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
-                    Hub ID
+                    Hub
                   </Typography>
                   <Typography variant="body1" sx={{ fontWeight: 500, mt: 0.5 }}>
-                    {selectedDelivery.hubId}
+                    {selectedDelivery.hub?.name || `ID: ${selectedDelivery.hubId}`}
                   </Typography>
                 </Box>
 
@@ -36,7 +37,7 @@ export default function DeliveriesSidepanel({selectedDelivery}: {selectedDeliver
                     <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
                       Current Status
                     </Typography>
-<Chip
+            <Chip
           label={selectedDelivery.status}
           size="small"
           color={

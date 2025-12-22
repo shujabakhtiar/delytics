@@ -26,6 +26,8 @@ export default function DeliveriesRow({
       }}
     >
       <TableCell>#{delivery.id}</TableCell>
+      <TableCell>{delivery.region?.name || `-`}</TableCell>
+      <TableCell>{delivery.hub?.name || `-`}</TableCell>
       <TableCell>
         <Chip
           label={delivery.status}

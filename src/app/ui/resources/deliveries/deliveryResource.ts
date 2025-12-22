@@ -1,7 +1,21 @@
 // lib/api/resources/deliveries.ts
 import { apiFetch } from '@/app/ui/resources/apiClient';
 
-// Define types for your portfolio (Senior practice!)
+export interface Region {
+  id: number;
+  name: string;
+}
+
+export interface Hub {
+  id: number;
+  name: string;
+}
+
+export interface Agent {
+  id: number;
+  name: string;
+}
+
 export interface Delivery {
   id: number;
   tenantId: number;
@@ -13,6 +27,9 @@ export interface Delivery {
   slaBreached: boolean;
   deliveredAt: string;
   createdAt: string;
+  region?: Region;
+  hub?: Hub;
+  agent?: Agent;
 }
 
 export interface DeliveryFilters {

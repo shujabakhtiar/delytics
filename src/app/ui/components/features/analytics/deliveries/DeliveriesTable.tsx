@@ -112,6 +112,8 @@ export default function DeliveriesTable() {
           <TableHead>
             <TableRow sx={{ bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)') }}>
               <TableCell sx={{ fontWeight: 600 }}>Delivery ID</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Region</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Hub</TableCell>
               <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
               <TableCell sx={{ fontWeight: 600 }}>Delivery Minutes</TableCell>
               <TableCell sx={{ fontWeight: 600 }}>Delivered At</TableCell>
@@ -129,7 +131,7 @@ export default function DeliveriesTable() {
             ))}
             {!isLoading && deliveries.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ py: 8 }}>
+                <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
                   <Typography variant="body1" color="text.secondary">
                     No deliveries found matching your search.
                   </Typography>
