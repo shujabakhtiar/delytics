@@ -1,5 +1,4 @@
 import { authRouter } from '@/app/api/features/auth/auth.routes';
-import { exampleRouter } from '@/app/api/features/exampleFeature/example.routes';
 import { NextRequest, NextResponse } from 'next/server';
 import { tenantRouter } from '@/app/api/features/tenants/tenants.routes';
 import { regionRouter } from '@/app/api/features/region/region.route';
@@ -27,9 +26,6 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ slug: s
         case 'auth':
             if (!action) return new NextResponse('Action Required', { status: 400 });
             return authRouter(req, { action });
-        case 'example':
-            if (!action) return new NextResponse('Action Required', { status: 400 });
-            return exampleRouter(req, { action });
         case 'tenant':
             return tenantRouter(req, { action });
         case 'region':

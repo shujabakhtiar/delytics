@@ -8,7 +8,7 @@ datasource db {
 
 model Tenant {
   id        Int    @id @default(autoincrement())
-  name      String
+  name      String @unique
   createdAt DateTime  @default(now())
   regions   Region[]
   users     User[]
@@ -22,7 +22,7 @@ model Tenant {
 model Region {
   id        Int    @id @default(autoincrement())
   tenantId  Int
-  name      String
+  name      String @unique
   timezone  String
   createdAt DateTime  @default(now())
   
@@ -41,6 +41,7 @@ model Region {
 model User {
   id           Int       @id @default(autoincrement())
   tenantId     Int
+  name         String    @unique
   email        String    @unique
   passwordHash String
   role         String
@@ -72,7 +73,7 @@ model Hub {
   id        Int    @id @default(autoincrement())
   tenantId  Int
   regionId  Int
-  name      String
+  name      String @unique
   capacity  Int
   createdAt DateTime  @default(now())
 
@@ -91,6 +92,7 @@ model Agent {
   tenantId  Int
   regionId  Int
   hubId     Int
+  name      String @unique
   status    String
   createdAt DateTime  @default(now())
 
@@ -136,7 +138,7 @@ model Dashboard {
   tenantId  Int
   regionId  Int?
   createdBy Int
-  name      String
+  name      String   @unique
   isShared  Boolean  @default(false)
   createdAt DateTime @default(now())
 
