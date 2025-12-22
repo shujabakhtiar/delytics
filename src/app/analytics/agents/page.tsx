@@ -1,10 +1,9 @@
 "use client";
 
 import RoutedHeader from "@/app/components/common/RoutedHeader";
-import DeliveriesTable from "../../components/features/analytics/deliveries/DeliveriesTable";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
-export default function DeliveriesPage() {
+export default function AgentsPage() {
     return (
          <Box sx={{ 
                    p: { xs: 2, md: 4 }, 
@@ -16,11 +15,11 @@ export default function DeliveriesPage() {
                }}>
                    <Box sx={{ flexShrink: 0 }}>
                        <RoutedHeader 
-                           title="Deliveries"
+                           title="Agents"
                            routedLinks={[
                                { label: "Delytics", href: "/" },
                                { label: "Analytics", href: "/analytics" },
-                               { label: "Deliveries", href: "/analytics/deliveries" },
+                               { label: "Agents", href: "/analytics/agents" },
                            ]}/>
                    </Box>
                    <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
@@ -31,9 +30,12 @@ export default function DeliveriesPage() {
                        overflow: 'hidden'
                    }}>
                        <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
-                           <DeliveriesTable />
+                           <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                               Agents
+                           </Typography>
                        </Box>
-                   </Box>            </Box>
+                   </Box>           
+                </Box>
                </Box>
     );
 }
