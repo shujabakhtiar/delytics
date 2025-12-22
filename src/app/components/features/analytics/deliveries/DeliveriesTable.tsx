@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   TableBody,
   TableCell,
@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import PaginatedTable from "@/app/components/common/table/PaginatedTable";
 import { useTableFilters } from "@/hooks/use-table-filters";
+import DeliveriesRow from "./DeliveriesRow";
 
 // Mock Data
 const singleMock = [
@@ -148,39 +149,12 @@ export default function DeliveriesTable() {
         </TableHead>
         <TableBody>
           {visibleRows.map((delivery) => (
-            <TableRow
+            <DeliveriesRow
               key={delivery.id}
-              hover
-              onClick={() => setSelectedDelivery(delivery)}
-              selected={selectedDelivery?.id === delivery.id}
-              sx={{
-                cursor: "pointer",
-                "&:last-child td, &:last-child th": { border: 0 },
-                '&.Mui-selected': {
-                  backgroundColor: (theme) => `${theme.palette.primary.main}1A !important`,
-                }
-              }}
-            >
-              <TableCell>#{delivery.id}</TableCell>
-              <TableCell>
-                <Chip
-                  label={delivery.status}
-                  size="small"
-                  color={delivery.status === 'Delivered' ? 'success' : delivery.status === 'In Transit' ? 'primary' : 'default'}
-                  variant="outlined"
-                />
-              </TableCell>
-              <TableCell>{delivery.deliveryTimeMinutes} min</TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>{new Date(delivery.deliveredAt).toLocaleString()}</TableCell>
-              <TableCell>
-                <Chip
-                  label={delivery.slaBreached ? "Yes" : "No"}
-                  size="small"
-                  color={delivery.slaBreached ? "error" : "success"}
-                  sx={{ fontWeight: 600 }}
-                />
-              </TableCell>
-            </TableRow>
+              delivery={delivery}
+              isSelected={selectedDelivery?.id === delivery.id}
+              onClick={setSelectedDelivery}
+            />
           ))}
         </TableBody>
       </PaginatedTable>

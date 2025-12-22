@@ -1,5 +1,3 @@
-"use client";
-
 import { Box } from "@mui/material";
 import DeliveriesTable from "./DeliveriesTable";
 import RoutedHeader from "@/app/components/common/RoutedHeader";
