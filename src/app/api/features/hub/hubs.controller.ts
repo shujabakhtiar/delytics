@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { hubService } from "./hubs.service";
+import { HubFilters, hubService } from "./hubs.service";
 import { ApiResponse } from "@/app/types";
+import { getPaginationParams } from "../../utils/pagination";
 
 export class HubController {
     async createHub(req: Request): Promise <NextResponse<ApiResponse<any>>> {
@@ -55,10 +56,19 @@ export class HubController {
     }
     async getAllHubs(req: Request): Promise <NextResponse<ApiResponse<any>>> {
         try {
-            const hub = await hubService.getHubs();
+            const { searchParams } = new URL(req.url);
+            const pagination = getPaginationParams(searchParams);
+            const filters: HubFilters = {
+                name: searchParams.get('name') || undefined,
+                minCapacity: searchParams.get('minCapacity') ? Number(searchParams.get('minCapacity')) : undefined,
+                maxCapacity: searchParams.get('maxCapacity') ? Number(searchParams.get('maxCapacity')) : undefined,
+                regionId: searchParams.get('regionId') ? Number(searchParams.get('regionId')) : undefined,
+                region: searchParams.get('region') || undefined,
+            }
+            const result = await hubService.getHubs(filters, pagination);
             return NextResponse.json({
                 success: true,
-                data: hub,
+                data: result,
             });
         } catch (error: any) {
             console.error('Error getting hubs:', error);

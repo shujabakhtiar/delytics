@@ -1,13 +1,41 @@
 import prisma from "@/lib/prisma";
+import { paginate, PaginationParams } from "../../utils/pagination";
+
+export interface HubFilters {
+    name?: string;
+    minCapacity?: number;
+    maxCapacity?: number;
+    regionId?: number;
+    region?: string;
+}
 
 export class HubService {
     async getHubById(id: number) {
         const hub = await prisma.hub.findUnique({ where: { id } });
         return hub;
     }
-    async getHubs() {
-        const hubs = await prisma.hub.findMany();
-        return hubs;
+    async getHubs(filters: HubFilters, pagination: PaginationParams) {
+        const where: any = {};
+        if (filters.name) where.name = { contains: filters.name, mode: 'insensitive' };
+        
+        if (filters.minCapacity !== undefined || filters.maxCapacity !== undefined) {
+            where.capacity = {};
+            if (filters.minCapacity !== undefined) where.capacity.gte = filters.minCapacity;
+            if (filters.maxCapacity !== undefined) where.capacity.lte = filters.maxCapacity;
+        }
+
+        if (filters.regionId) where.regionId = filters.regionId;
+        if (filters.region) where.region = { name: { contains: filters.region, mode: 'insensitive' } };
+        
+        return paginate(prisma.hub, {
+            where,
+            include: {
+                region: true
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        }, pagination)
     }
     async createHub(hubData: any) {
         const hub = await prisma.hub.create({
