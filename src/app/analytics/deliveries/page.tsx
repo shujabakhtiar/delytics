@@ -1,39 +1,9 @@
 "use client";
 
-import RoutedHeader from "@/app/components/common/RoutedHeader";
-import DeliveriesTable from "../../components/features/analytics/deliveries/DeliveriesTable";
-import { Box } from "@mui/material";
+import Deliveries from "@/app/components/features/analytics/deliveries/Deliveries";
 
 export default function DeliveriesPage() {
     return (
-         <Box sx={{ 
-                   p: { xs: 2, md: 4 }, 
-                   bgcolor: 'background.default', 
-                   height: '100%',
-                   display: 'flex',
-                   flexDirection: 'column',
-                   overflow: 'hidden'
-               }}>
-                   <Box sx={{ flexShrink: 0 }}>
-                       <RoutedHeader 
-                           title="Deliveries"
-                           routedLinks={[
-                               { label: "Delytics", href: "/" },
-                               { label: "Analytics", href: "/analytics" },
-                               { label: "Deliveries", href: "/analytics/deliveries" },
-                           ]}/>
-                   </Box>
-                   <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                   <Box sx={{ 
-                       display: 'flex', 
-                       flexDirection: 'column', 
-                       height: '100%',
-                       overflow: 'hidden'
-                   }}>
-                       <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
-                           <DeliveriesTable />
-                       </Box>
-                   </Box>            </Box>
-               </Box>
+        <Deliveries/>
     );
 }

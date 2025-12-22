@@ -18,7 +18,7 @@ export default function AgentsPage() {
                            title="Agents"
                            routedLinks={[
                                { label: "Delytics", href: "/" },
-                               { label: "Analytics", href: "/analytics" },
+                               { label: "Analytics", href: "/overview" },
                                { label: "Agents", href: "/analytics/agents" },
                            ]}/>
                    </Box>
