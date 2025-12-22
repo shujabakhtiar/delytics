@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import DeliveriesTable from "./DeliveriesTable";
 import RoutedHeader from "@/app/components/common/RoutedHeader";
 import DeliveryFiltersModal from "./DeliveryFiltersModal";
+import FilterChips from "@/app/components/common/FilterChips";
 
 export default function Deliveries() {
     return (
@@ -25,6 +26,7 @@ export default function Deliveries() {
                            ]}>
                             <DeliveryFiltersModal />
                             </RoutedHeader>
+                        <FilterChips /> 
                    </Box>
         <Box sx={{ 
                        display: 'flex', 

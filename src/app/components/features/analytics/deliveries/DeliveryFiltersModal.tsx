@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -18,13 +18,12 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
-  InputAdornment,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { useTableFilters } from "@/hooks/use-table-filters";
 
-// Mock data options - in a real app these might come from props or an API
+// Mock data options
 const REGIONS = ["North America", "Europe", "Asia Pacific", "Latin America", "Middle East"];
 const HUBS = ["New York", "London", "Singapore", "Tokyo", "Berlin", "Sao Paulo"];
 const STATUSES = ["Pending", "In Transit", "Delivered", "Failed", "Returned"];
@@ -48,26 +47,43 @@ const initialFilters: DeliveryFilters = {
 };
 
 export default function DeliveryFiltersModal() {
+  const { filters: urlFilters, setFilters } = useTableFilters();
   const [open, setOpen] = useState(false);
-  const [filters, setFilters] = useState<DeliveryFilters>(initialFilters);
+  const [localFilters, setLocalFilters] = useState<DeliveryFilters>(initialFilters);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  // Sync local filters with URL params when modal opens
+  useEffect(() => {
+    if (open) {
+      setLocalFilters({
+        startDate: (urlFilters.startDate as string) || "",
+        endDate: (urlFilters.endDate as string) || "",
+        region: (urlFilters.region as string) || "",
+        hub: (urlFilters.hub as string) || "",
+        status: (urlFilters.status as string) || "",
+        slaBreach: urlFilters.slaBreach === "true",
+      });
+    }
+  }, [open, urlFilters]);
+
   const handleApply = () => {
-    // Logic to apply filters would go here (e.g., passing to parent via props)
-    console.log("Applying filters:", filters);
+    setFilters({
+      ...localFilters,
+      slaBreach: localFilters.slaBreach ? "true" : null,
+    });
     handleClose();
   };
 
   const handleReset = () => {
-    setFilters(initialFilters);
+    setLocalFilters(initialFilters);
   };
 
   const handleChange = (field: keyof DeliveryFilters, value: any) => {
-    setFilters((prev) => ({
+    setLocalFilters((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -129,7 +145,7 @@ export default function DeliveryFiltersModal() {
                   type="date"
                   label="Start Date"
                   InputLabelProps={{ shrink: true }}
-                  value={filters.startDate}
+                  value={localFilters.startDate}
                   onChange={(e) => handleChange("startDate", e.target.value)}
                   size="small"
                 />
@@ -138,7 +154,7 @@ export default function DeliveryFiltersModal() {
                   type="date"
                   label="End Date"
                   InputLabelProps={{ shrink: true }}
-                  value={filters.endDate}
+                  value={localFilters.endDate}
                   onChange={(e) => handleChange("endDate", e.target.value)}
                   size="small"
                 />
@@ -151,7 +167,7 @@ export default function DeliveryFiltersModal() {
                 select
                 fullWidth
                 label="Region"
-                value={filters.region}
+                value={localFilters.region}
                 onChange={(e) => handleChange("region", e.target.value)}
                 size="small"
               >
@@ -167,7 +183,7 @@ export default function DeliveryFiltersModal() {
                 select
                 fullWidth
                 label="Hub"
-                value={filters.hub}
+                value={localFilters.hub}
                 onChange={(e) => handleChange("hub", e.target.value)}
                 size="small"
               >
@@ -185,7 +201,7 @@ export default function DeliveryFiltersModal() {
               select
               fullWidth
               label="Status"
-              value={filters.status}
+              value={localFilters.status}
               onChange={(e) => handleChange("status", e.target.value)}
               size="small"
             >
@@ -202,7 +218,7 @@ export default function DeliveryFiltersModal() {
                 <FormControlLabel
                 control={
                     <Switch
-                    checked={filters.slaBreach}
+                    checked={localFilters.slaBreach}
                     onChange={(e) => handleChange("slaBreach", e.target.checked)}
                     color="error"
                     />
