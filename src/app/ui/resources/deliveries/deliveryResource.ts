@@ -4,11 +4,15 @@ import { apiFetch } from '@/app/ui/resources/apiClient';
 // Define types for your portfolio (Senior practice!)
 export interface Delivery {
   id: number;
+  tenantId: number;
+  regionId: number;
+  hubId: number;
+  agentId: number;
   status: 'PENDING' | 'IN_TRANSIT' | 'DELIVERED' | 'FAILED';
   deliveryTimeMinutes: number | null;
   slaBreached: boolean;
-  regionId: number;
-  agentId: number;
+  deliveredAt: string;
+  createdAt: string;
 }
 
 export interface DeliveryFilters {
@@ -22,9 +26,8 @@ export interface DeliveryFilters {
 export const deliveriesResource = {
   // Get all deliveries with optional filtering
   list: (filters?: DeliveryFilters) => 
-    apiFetch<Delivery[]>('/deliveries', { 
+    apiFetch<{ success: boolean; data: Delivery[] }>('/delivery', { 
       params: filters as Record<string, string>,
-      next: { tags: ['deliveries'] } // Next.js Cache Tagging
     }),
 
   // Get a single delivery
@@ -36,11 +39,5 @@ export const deliveriesResource = {
     apiFetch<Delivery>(`/deliveries/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
-    }),
-
-  // Get Analytics Summary (for your dashboard cards)
-  getStats: () => 
-    apiFetch<{ total: number; breachRate: number }>('/deliveries/stats', {
-      next: { revalidate: 60 } // Revalidate stats every minute
     }),
 };

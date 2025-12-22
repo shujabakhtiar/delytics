@@ -1,15 +1,5 @@
+import { Delivery } from "@/app/ui/resources/deliveries/deliveryResource";
 import { TableRow, TableCell, Chip } from "@mui/material";
-
-type Delivery = {
-  id: number;
-  status: string;
-  deliveryTimeMinutes: number;
-  deliveredAt: string;
-  slaBreached: boolean;
-  regionName: string;
-  agentName: string;
-  hubName: string;
-};
 
 type DeliveriesRowProps = {
   delivery: Delivery;
@@ -41,18 +31,18 @@ export default function DeliveriesRow({
           label={delivery.status}
           size="small"
           color={
-            delivery.status === "Delivered"
+            delivery.status === "DELIVERED"
               ? "success"
-              : delivery.status === "In Transit"
+              : delivery.status === "IN_TRANSIT"
               ? "primary"
               : "default"
           }
           variant="outlined"
         />
       </TableCell>
-      <TableCell>{delivery.deliveryTimeMinutes} min</TableCell>
+      <TableCell>{delivery.deliveryTimeMinutes ? `${delivery.deliveryTimeMinutes} min` : '-'}</TableCell>
       <TableCell sx={{ whiteSpace: "nowrap" }}>
-        {new Date(delivery.deliveredAt).toLocaleString()}
+        {delivery.deliveredAt ? new Date(delivery.deliveredAt).toLocaleString() : 'N/A'}
       </TableCell>
       <TableCell>
         <Chip

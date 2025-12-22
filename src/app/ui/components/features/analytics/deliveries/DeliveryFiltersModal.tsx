@@ -26,7 +26,7 @@ import { useTableFilters } from "@/app/ui/hooks/use-table-filters";
 // Mock data options
 const REGIONS = ["North America", "Europe", "Asia Pacific", "Latin America", "Middle East"];
 const HUBS = ["New York", "London", "Singapore", "Tokyo", "Berlin", "Sao Paulo"];
-const STATUSES = ["Pending", "In Transit", "Delivered", "Failed", "Returned"];
+const STATUSES = ["PENDING", "IN_TRANSIT", "DELIVERED", "FAILED"];
 
 export type DeliveryFilters = {
   startDate: string;
@@ -208,7 +208,7 @@ export default function DeliveryFiltersModal() {
                <MenuItem value=""><em>None</em></MenuItem>
               {STATUSES.map((option) => (
                 <MenuItem key={option} value={option}>
-                  {option}
+                  {option.replace('_', ' ').charAt(0) + option.replace('_', ' ').slice(1).toLowerCase()}
                 </MenuItem>
               ))}
             </TextField>
