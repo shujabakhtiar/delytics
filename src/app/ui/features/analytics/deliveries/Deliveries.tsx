@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
 import DeliveriesTable from "./DeliveriesTable";
-import RoutedHeader from "@/app/components/common/RoutedHeader";
+import RoutedHeader from "@/app/ui/common/RoutedHeader";
 import DeliveryFiltersModal from "./DeliveryFiltersModal";
-import FilterChips from "@/app/components/common/FilterChips";
+import FilterChips from "@/app/ui/common/FilterChips";
 
 export default function Deliveries() {
     return (

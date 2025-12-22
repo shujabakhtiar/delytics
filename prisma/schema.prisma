@@ -114,9 +114,9 @@ model Delivery {
   hubId               Int
   agentId             Int
   status              String
-  deliveryTimeMinutes Int
+  deliveryTimeMinutes Int?
   slaBreached         Boolean
-  deliveredAt         DateTime
+  deliveredAt         DateTime?
   createdAt           DateTime @default(now())
 
   tenant  Tenant @relation(fields: [tenantId], references: [id])

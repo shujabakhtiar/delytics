@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Chip, Slide, Typography } from "@mui/material";
-import { useTableFilters } from "@/hooks/use-table-filters";
+import { useTableFilters } from "@/app/ui/hooks/use-table-filters";
 import CancelTokenIcon from "@mui/icons-material/Cancel";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 

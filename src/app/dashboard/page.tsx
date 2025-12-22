@@ -1,5 +1,5 @@
 "use client";
-import DashboardContainer from "../components/features/dashboard/DashboardContainer";
+import DashboardContainer from "../ui/features/dashboard/DashboardContainer";
 
 export default function Dashboard() {
     return (

@@ -1,6 +1,6 @@
 "use client";
 
-import RoutedHeader from "@/app/components/common/RoutedHeader";
+import RoutedHeader from "@/app/ui/common/RoutedHeader";
 import { Box, Typography } from "@mui/material";
 
 export default function AgentsPage() {

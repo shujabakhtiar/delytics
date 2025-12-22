@@ -20,7 +20,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
-import { useSidebar } from "@/app/components/providers/SidebarProvider";
+import { useSidebar } from "@/app/ui/providers/SidebarProvider";
 
 const drawerWidth = 260;
 

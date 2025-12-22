@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import { useTableFilters } from "@/hooks/use-table-filters";
+import { useTableFilters } from "@/app/ui/hooks/use-table-filters";
 
 // Mock data options
 const REGIONS = ["North America", "Europe", "Asia Pacific", "Latin America", "Middle East"];

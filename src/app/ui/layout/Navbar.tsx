@@ -4,15 +4,14 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
-import { ColorModeContext } from '@/app/components/providers/ThemeRegistry';
-import { useSidebar } from '@/app/components/providers/SidebarProvider';
+import { ColorModeContext } from '@/app/ui/providers/ThemeRegistry';
+import { useSidebar } from '@/app/ui/providers/SidebarProvider';
 import RegionSelector from '../common/RegionSelector';
 
 export default function Navbar() {
