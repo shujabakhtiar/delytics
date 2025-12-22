@@ -15,6 +15,7 @@ import PaginatedTable from "@/app/ui/components/common/table/PaginatedTable";
 import { useTableFilters } from "@/app/ui/hooks/use-table-filters";
 import DeliveriesRow from "./DeliveriesRow";
 import { Delivery, deliveriesResource } from "@/app/ui/resources/deliveries/deliveryResource";
+import DeliveriesSidepanel from "./DeliveriesSidepanel";
 
 export default function DeliveriesTable() {
   const { filters, isPending: isFilterPending } = useTableFilters();
@@ -102,48 +103,7 @@ export default function DeliveriesTable() {
           sidePanelTitle="Delivery Details"
           sidePanelContent={
             selectedDelivery && (
-              <Stack spacing={3}>
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    # {selectedDelivery.id}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
-                    Region ID
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 500, mt: 0.5 }}>
-                    {selectedDelivery.regionId}
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
-                    Agent ID
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 500, mt: 0.5 }}>
-                    {selectedDelivery.agentId}
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
-                    Hub ID
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 500, mt: 0.5 }}>
-                    {selectedDelivery.hubId}
-                  </Typography>
-                </Box>
-
-                <Divider />
-
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
-                      Current Status
-                    </Typography>
-                    <Chip label={selectedDelivery.status} color="primary" size="small" />
-                </Box>
-              </Stack>
+              <DeliveriesSidepanel selectedDelivery={selectedDelivery} />
             )
           }
         >
