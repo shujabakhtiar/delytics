@@ -117,7 +117,7 @@ export default function HubsTable() {
             ))}
             {!isLoading && hubs.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
+                <TableCell colSpan={3} align="center" sx={{ py: 8 }}>
                   <Typography variant="body1" color="text.secondary">
                     No hubs found matching your search.
                   </Typography>
