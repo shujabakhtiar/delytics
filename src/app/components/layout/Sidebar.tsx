@@ -75,23 +75,14 @@ export default function Sidebar() {
         <List>
 
           {/* Dashboard */}
-          <ListItemButton onClick={() => toggleMenu("dashboard")}>
+           <ListItemButton component={Link} href="/dashboard">
             <ListItemIcon>
-              <DashboardIcon />
+              <SettingsIcon />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
-            {openMenus.dashboard ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
 
-          <Collapse in={openMenus.dashboard} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItemButton component={Link} href="/dashboard" sx={{ pl: 4 }}>
-                <ListItemText primary="Overview" />
-              </ListItemButton>
-            </List>
-          </Collapse>
-
-             {/* Analytics (with sub-menu) */}
+          {/* Analytics (with sub-menu) */}
           <ListItemButton onClick={() => toggleMenu("analytics")}>
             <ListItemIcon>
               <BarChartIcon />
@@ -102,6 +93,9 @@ export default function Sidebar() {
 
           <Collapse in={openMenus.analytics} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
+              <ListItemButton component={Link} href="/analytics/overview" sx={{ pl: 4 }}>
+                <ListItemText primary="Overview" />
+              </ListItemButton>
               <ListItemButton component={Link} href="/analytics/deliveries" sx={{ pl: 4 }}>
                 <ListItemText primary="Deliveries" />
               </ListItemButton>

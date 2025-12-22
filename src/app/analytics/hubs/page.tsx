@@ -18,7 +18,7 @@ export default function HubsPage() {
                            title="Hubs"
                            routedLinks={[
                                { label: "Delytics", href: "/" },
-                               { label: "Analytics", href: "/analytics" },
+                               { label: "Analytics", href: "/overview" },
                                { label: "Hubs", href: "/analytics/hubs" },
                            ]}/>
                    </Box>
