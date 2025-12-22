@@ -1,4 +1,3 @@
-import React from "react";
 import { TableRow, TableCell, Chip } from "@mui/material";
 
 type Delivery = {
