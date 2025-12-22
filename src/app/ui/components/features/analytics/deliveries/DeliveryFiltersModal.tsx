@@ -122,8 +122,8 @@ export default function DeliveryFiltersModal() {
         }}
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-          <Typography variant="h6" fontWeight={600}>
-            Filter Deliveries
+          <Typography fontWeight={600}>
+            Filters
           </Typography>
           <IconButton onClick={handleClose} aria-label="close" size="small">
             <CloseIcon />
@@ -137,7 +137,7 @@ export default function DeliveryFiltersModal() {
             {/* Date Range Section */}
             <Box>
               <Typography variant="subtitle2" color="text.secondary" gutterBottom fontWeight={500}>
-                Date Range
+                Delivered at range
               </Typography>
               <Stack direction="row" spacing={2}>
                 <TextField
