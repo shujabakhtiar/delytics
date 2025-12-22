@@ -20,7 +20,7 @@ export default function Deliveries() {
                            title="Deliveries"
                            routedLinks={[
                                { label: "Delytics", href: "/" },
-                               { label: "Analytics", href: "/overview" },
+                               { label: "Analytics", href: "/analytics/overview" },
                                { label: "Deliveries", href: "/analytics/deliveries" },
                            ]}>
                             <DeliveryFiltersModal />
