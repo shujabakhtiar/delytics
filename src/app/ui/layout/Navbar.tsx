@@ -12,7 +12,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
 import { ColorModeContext } from '@/app/ui/providers/ThemeRegistry';
 import { useSidebar } from '@/app/ui/providers/SidebarProvider';
-import RegionSelector from '../common/RegionSelector';
+import RegionSelector from '../components/common/RegionSelector';
 
 export default function Navbar() {
   const theme = useTheme();

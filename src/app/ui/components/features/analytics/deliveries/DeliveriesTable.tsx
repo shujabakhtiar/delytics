@@ -12,7 +12,7 @@ import {
   Stack,
   Chip,
 } from "@mui/material";
-import PaginatedTable from "@/app/ui/common/table/PaginatedTable";
+import PaginatedTable from "@/app/ui/components/common/table/PaginatedTable";
 import { useTableFilters } from "@/app/ui/hooks/use-table-filters";
 import DeliveriesRow from "./DeliveriesRow";
 

@@ -8,12 +8,12 @@ import {
     Divider
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
-import { KpiCard } from "../../common/cards/KpiCard";
+import { KpiCard } from "@/app/ui/components/common/cards/KpiCard";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import SpeedIcon from '@mui/icons-material/Speed';
 import HubIcon from '@mui/icons-material/Hub';
-import RoutedHeader from "../../common/RoutedHeader";
+import RoutedHeader from "@/app/ui/components/common/RoutedHeader";
 
 export default function DashboardContainer() {
     const theme = useTheme();
