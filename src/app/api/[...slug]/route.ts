@@ -26,7 +26,8 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ slug: s
     // Public routes that don't require authentication
     const publicRoutes = [
         { feature: 'auth', action: 'login' },
-        { feature: 'auth', action: 'register' }
+        { feature: 'auth', action: 'register' },
+        { feature: 'auth', action: 'reset-password' }
     ];
 
     const isPublicRoute = publicRoutes.some(route => 

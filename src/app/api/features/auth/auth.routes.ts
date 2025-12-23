@@ -27,5 +27,10 @@ export async function authRouter(req: Request, params: { action: string }) {
         return authController.logout(req);
     }
 
+    // POST /api/auth/reset-password
+    if (req.method === 'POST' && action === 'reset-password') {
+        return authController.resetPassword(req);
+    }
+
     return new Response('Not Found', { status: 404 });
 }

@@ -18,7 +18,12 @@ export async function apiFetch<T>(endpoint: string, options: HttpRequestOptions 
   }
 
   // 2. Default Headers
-  const headers = { 'Content-Type': 'application/json', ...customConfig.headers };
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const headers = { 
+    'Content-Type': 'application/json', 
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    ...customConfig.headers 
+  };
 
   const config: RequestInit = {
     ...customConfig,

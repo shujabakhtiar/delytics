@@ -103,6 +103,32 @@ export class AuthService {
             throw new Error('Invalid token');
         }
     }
+
+    async resetPassword(email: string, newPassword: string): Promise<any> {
+        const user = await prisma.user.findUnique({
+            where: { email }
+        });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        
+        const updatedUser = await prisma.user.update({
+            where: { email },
+            data: {
+                passwordHash: hashedPassword
+            },
+            select: {
+                id: true,
+                email: true,
+                name: true
+            }
+        });
+
+        return updatedUser;
+    }
 }
 
 export const authService = new AuthService();

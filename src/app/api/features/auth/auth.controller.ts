@@ -76,6 +76,30 @@ export class AuthController {
         }
     }
 
+    async resetPassword(req: Request): Promise<NextResponse<ApiResponse<any>>> {
+        try {
+            const body = await req.json();
+            const { email, password } = body;
+
+            if (!email || !password) {
+                return NextResponse.json({ success: false, data: null, error: 'Missing email or password' }, { status: 400 });
+            }
+
+            const user = await authService.resetPassword(email, password);
+
+            return NextResponse.json({
+                success: true,
+                data: { message: 'Password updated successfully', user }
+            });
+        } catch (error: any) {
+            return NextResponse.json({
+                success: false,
+                data: null,
+                error: error.message || 'Reset failed'
+            }, { status: 400 });
+        }
+    }
+
     async logout(req: Request): Promise<NextResponse<ApiResponse<any>>> {
         return NextResponse.json({
             success: true,

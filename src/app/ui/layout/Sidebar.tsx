@@ -21,15 +21,19 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import { useSidebar } from "@/app/ui/providers/SidebarProvider";
+import { useAuth } from "@/app/ui/providers/AuthProvider";
 
 const drawerWidth = 260;
 
 export default function Sidebar() {
+  const { user } = useAuth();
   const { isOpen, toggleSidebar } = useSidebar();
   const [openMenus, setOpenMenus] = React.useState({
     dashboard: true,
     analytics: false,
   });
+
+  if (!user) return null;
 
   const toggleMenu = (key: keyof typeof openMenus) => {
     setOpenMenus((prev) => ({
