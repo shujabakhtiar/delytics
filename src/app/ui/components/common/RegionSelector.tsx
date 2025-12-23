@@ -1,13 +1,39 @@
 "use client";
 
 import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { regionResource } from "../../resources/regions/regionResource";
 
-export default function RegionSelector() {
+export default function RegionSelector({isFilterButton}: {isFilterButton: boolean}) {
     const [region, setRegion] = React.useState('');
+    const [regionsList, setRegionsList] = React.useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    
     const handleChange = (event: SelectChangeEvent) => {
       setRegion(event.target.value as string);
     };
+
+    const fetchRegions = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await regionResource.list();
+        if((response as any).success){
+          setRegionsList(response.data); 
+        } else {
+            throw new Error("Failed to fetch regions");
+        }
+      } catch (error) {
+        setError('Failed to fetch regions');
+      }
+      setIsLoading(false);
+    };
+
+    useEffect(() => {
+      fetchRegions();
+    }, []);
+
     return (
         <FormControl variant="standard" sx={{ m: 1, minWidth: 170}}>
         <InputLabel id="demo-simple-select-standard-label">Region</InputLabel>
@@ -21,12 +47,11 @@ export default function RegionSelector() {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          <MenuItem value="Asia">Asia</MenuItem>
-          <MenuItem value="Europe">Europe</MenuItem>
-          <MenuItem value="Africa">Africa</MenuItem>
-          <MenuItem value="North America">North America</MenuItem>
-          <MenuItem value="South America">South America</MenuItem>
-          <MenuItem value="Australia">Australia</MenuItem>
+          {regionsList.map((region: any) => (
+            <MenuItem key={region.id} value={region.name}>
+              {region.name}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
     );

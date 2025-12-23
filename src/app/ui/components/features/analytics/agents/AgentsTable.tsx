@@ -30,6 +30,7 @@ export default function AgentsTable() {
             };
     
             const response = await agentsResource.list(requestFilters as any);
+            console.log("response agents",response);
             if (response.success) {
                 setAgents(response.data.items);
                 setTotalCount(response.data.meta.total);
