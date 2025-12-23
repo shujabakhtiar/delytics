@@ -17,6 +17,11 @@ export async function authRouter(req: Request, params: { action: string }) {
         return authController.login(req);
     }
 
+    // GET /api/auth/me
+    if (req.method === 'GET' && action === 'me') {
+        return authController.me(req);
+    }
+
     // POST /api/auth/logout
     if (req.method === 'POST' && action === 'logout') {
         return authController.logout(req);
