@@ -11,7 +11,13 @@ export interface HubFilters {
 
 export class HubService {
     async getHubById(id: number) {
-        const hub = await prisma.hub.findUnique({ where: { id } });
+        const hub = await prisma.hub.findUnique({ 
+            where: { id },
+            include: {
+                region: true,
+                agents: true
+            }
+        });
         return hub;
     }
     async getHubs(filters: HubFilters, pagination: PaginationParams) {
@@ -30,7 +36,8 @@ export class HubService {
         return paginate(prisma.hub, {
             where,
             include: {
-                region: true
+                region: true,
+                agents: true
             },
             orderBy: {
                 createdAt: 'desc'

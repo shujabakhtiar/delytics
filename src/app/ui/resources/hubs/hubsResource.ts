@@ -6,6 +6,12 @@ export interface Region {
   name: string;
 }
 
+export interface Agent {
+  id: number;
+  name: string;
+  status: string;
+}
+
 export interface Hub {
   id: number;
   tenantId: number;
@@ -14,6 +20,7 @@ export interface Hub {
   capacity: number;
   createdAt: string;
   region?: Region;
+  agents?: Agent[];
 }
 
 export interface HubFilters {
