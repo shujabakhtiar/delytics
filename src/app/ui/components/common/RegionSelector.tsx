@@ -26,30 +26,37 @@ export default function RegionSelector({
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
     
     const region = value !== undefined ? value : internalRegion;
 
     // Fail-safe to prevent multiple concurrent requests (DDoS protection/Rate limiting)
     const isFetching = useRef(false);
+    const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
-    const fetchRegions = useCallback(async (pageNum: number, isInitial: boolean = false) => {
-      if (isFetching.current) return;
+    const fetchRegions = useCallback(async (pageNum: number, isInitial: boolean = false, search: string = '') => {
+      if (isFetching.current && !isInitial) return;
       
       isFetching.current = true;
       if (isInitial) {
         setIsLoading(true);
-        setRegionsList([]);
       } else {
         setIsLoadingMore(true);
       }
       
       setError(null);
       try {
-        const response = await regionResource.list({ page: pageNum, limit: 10 });
+        const response = await regionResource.list({ 
+          page: pageNum, 
+          limit: 10,
+          name: search || undefined
+        });
+
         if(response.success){
           const newRegions = response.data.items;
           setRegionsList(prev => isInitial ? newRegions : [...prev, ...newRegions]);
           setHasMore(response.data.meta.page < response.data.meta.totalPages);
+          setPage(pageNum);
         } else {
             throw new Error(response.error || "Failed to fetch regions");
         }
@@ -63,22 +70,30 @@ export default function RegionSelector({
     }, []);
 
     useEffect(() => {
-      fetchRegions(1, true);
-    }, [fetchRegions]);
+      fetchRegions(1, true, searchTerm);
+    }, [fetchRegions, searchTerm]);
 
-    const handleScroll = (event: React.UIEvent<HTMLUListElement>) => {
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const val = e.target.value;
+      if (searchTimeout.current) clearTimeout(searchTimeout.current);
+      searchTimeout.current = setTimeout(() => {
+        setSearchTerm(val);
+      }, 500);
+    };
+
+    const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
       const listboxNode = event.currentTarget;
+      
+      // Calculate if we've reached near the bottom
+      const isBottom = listboxNode.scrollTop + listboxNode.clientHeight >= listboxNode.scrollHeight - 20;
+      
       if (
-        listboxNode.scrollTop + listboxNode.clientHeight >= listboxNode.scrollHeight - 5 &&
+        isBottom &&
         hasMore &&
         !isLoadingMore &&
         !isFetching.current
       ) {
-        setPage(prev => {
-          const nextPage = prev + 1;
-          fetchRegions(nextPage);
-          return nextPage;
-        });
+        fetchRegions(page + 1, false, searchTerm);
       }
     };
 
@@ -91,21 +106,80 @@ export default function RegionSelector({
       }
     };
 
-    const renderMenuItems = () => [
-      <MenuItem key="none" value="">
-        <em>None</em>
-      </MenuItem>,
-      ...regionsList.map((r) => (
-        <MenuItem key={r.id} value={r.name}>
-          {r.name}
-        </MenuItem>
-      )),
-      isLoadingMore && (
-        <MenuItem key="loading-more" disabled sx={{ justifyContent: 'center' }}>
-          <CircularProgress size={20} />
-        </MenuItem>
-      )
-    ];
+    const renderMenuItems = () => {
+      if (isLoading && regionsList.length === 0) {
+        return [
+          <MenuItem key="loading" disabled sx={{ justifyContent: 'center', py: 2 }}>
+            <CircularProgress size={24} />
+          </MenuItem>
+        ];
+      }
+
+      const items = [
+        <MenuItem key="none" value="">
+          <em>None</em>
+        </MenuItem>,
+        ...regionsList.map((r) => (
+          <MenuItem key={r.id} value={r.name}>
+            {r.name}
+          </MenuItem>
+        ))
+      ];
+
+      if (isLoadingMore) {
+        items.push(
+          <MenuItem key="loading-more" disabled sx={{ justifyContent: 'center', py: 1 }}>
+            <CircularProgress size={20} />
+          </MenuItem>
+        );
+      }
+
+      if (!isLoading && regionsList.length === 0 && searchTerm) {
+        items.push(
+          <MenuItem key="no-results" disabled>
+            No regions found
+          </MenuItem>
+        );
+      }
+
+      return items;
+    };
+
+    const menuProps = {
+      autoFocus: false, // Prevent autofocus so search input works better
+      PaperProps: {
+        onScroll: handleScroll as any,
+        sx: { 
+          maxHeight: 300,
+          '& .MuiList-root': {
+            pt: 0 // Remove padding to keep search field at the very top
+          }
+        }
+      },
+      // Keep the menu open when clicking inside search
+      getContentAnchorEl: null,
+      anchorOrigin: {
+        vertical: "bottom",
+        horizontal: "left"
+      },
+      transformOrigin: {
+        vertical: "top",
+        horizontal: "left"
+      }
+    };
+
+    const SearchHeader = (
+      <Box sx={{ px: 2, py: 1, position: 'sticky', top: 0, bgcolor: 'background.paper', zIndex: 1, borderBottom: 1, borderColor: 'divider' }}>
+        <TextField
+          size="small"
+          fullWidth
+          placeholder="Search regions..."
+          onChange={handleSearchChange}
+          onKeyDown={(e) => e.stopPropagation()} // Prevent select closing on space/enter
+          onClick={(e) => e.stopPropagation()}
+        />
+      </Box>
+    );
 
     if (isFilterButton) {
       return (
@@ -117,17 +191,11 @@ export default function RegionSelector({
           onChange={handleChange}
           size="small"
           SelectProps={{
-            MenuProps: {
-              PaperProps: {
-                sx: { maxHeight: 300 }
-              },
-              MenuListProps: {
-                onScroll: handleScroll as any
-              }
-            }
+            MenuProps: menuProps as any
           }}
-          disabled={isLoading && regionsList.length === 0}
+          disabled={isLoading && regionsList.length === 0 && !searchTerm}
         >
+          {SearchHeader}
           {renderMenuItems()}
         </TextField>
       );
@@ -142,15 +210,9 @@ export default function RegionSelector({
           value={region}
           onChange={handleChange as any}
           label={label}
-          MenuProps={{
-            PaperProps: {
-              sx: { maxHeight: 300 }
-            },
-            MenuListProps: {
-              onScroll: handleScroll as any
-            }
-          }}
+          MenuProps={menuProps as any}
         >
+          {SearchHeader}
           {renderMenuItems()}
         </Select>
       </FormControl>

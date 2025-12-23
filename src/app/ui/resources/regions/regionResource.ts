@@ -32,8 +32,32 @@ export interface Region {
     createdAt: string;
 }
 export const regionResource = {
-    list: (filters?: RegionFilters) => apiFetch<ApiResponse<PaginatedResponse<Region>>>(
-            '/region', {
-                params: filters as any,
-    })
-}
+    // Get all regions with optional filtering and pagination
+    list: (filters?: RegionFilters) => apiFetch<ApiResponse<PaginatedResponse<Region>>>('/region', { 
+      params: filters as any,
+    }),
+
+    // Get a single region
+    get: (id: string | number) => 
+      apiFetch<ApiResponse<Region>>(`/region?id=${id}`),
+
+    // Create a region
+    create: (data: Partial<Region>) => 
+      apiFetch<ApiResponse<Region>>('/region', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+
+    // Update a region
+    update: (id: string | number, data: Partial<Region>) => 
+      apiFetch<ApiResponse<Region>>('/region', {
+        method: 'PUT',
+        body: JSON.stringify({ id, ...data }),
+      }),
+
+    // Delete a region
+    delete: (id: string | number) => 
+      apiFetch<ApiResponse<Region>>(`/region?id=${id}`, {
+        method: 'DELETE',
+      }),
+};
