@@ -2,11 +2,13 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useTransition, useMemo } from "react";
+import { useRegion } from "../providers/RegionProvider";
 
 export function useTableFilters() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { selectedRegion } = useRegion();
   const [isPending, startTransition] = useTransition();
 
   const filters = useMemo(() => {
@@ -14,8 +16,15 @@ export function useTableFilters() {
     searchParams.forEach((value, key) => {
       params[key] = value;
     });
+
+    // If no region set in URL, use the global region from context
+    if (!params.region && !params.regionId && selectedRegion) {
+      params.regionId = String(selectedRegion.id);
+      params.region = selectedRegion.name; // Keep name for display if needed
+    }
+
     return params;
-  }, [searchParams]);
+  }, [searchParams, selectedRegion]);
 
   const createQueryString = useCallback(
     (params: Record<string, string | null | undefined>) => {

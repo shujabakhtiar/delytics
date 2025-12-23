@@ -19,13 +19,14 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { useTableFilters } from "@/app/ui/hooks/use-table-filters";
+import RegionSelector from "@/app/ui/components/common/RegionSelector";
 
-const REGIONS = ["North America", "Europe", "Asia Pacific", "Latin America", "Middle East"];
 const STATUSES = ["ACTIVE", "INACTIVE", "BUSY", "OFFLINE"];
 
 export type AgentFilters = {
   name: string;
   region: string;
+  regionId: string | number;
   hub: string;
   status: string;
 };
@@ -33,6 +34,7 @@ export type AgentFilters = {
 const initialFilters: AgentFilters = {
   name: "",
   region: "",
+  regionId: "",
   hub: "",
   status: "",
 };
@@ -52,6 +54,7 @@ export default function AgentsFiltersModal() {
       setLocalFilters({
         name: (urlFilters.name as string) || "",
         region: (urlFilters.region as string) || "",
+        regionId: (urlFilters.regionId as string) || "",
         hub: (urlFilters.hub as string) || "",
         status: (urlFilters.status as string) || "",
       });
@@ -128,21 +131,12 @@ export default function AgentsFiltersModal() {
               size="small"
             />
 
-            <TextField
-                select
-                fullWidth
-                label="Region"
-                value={localFilters.region}
-                onChange={(e) => handleChange("region", e.target.value)}
-                size="small"
-              >
-                <MenuItem value=""><em>None</em></MenuItem>
-                {REGIONS.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-            </TextField>
+            <RegionSelector
+              isFilterButton={true}
+              fullWidth
+              value={localFilters.regionId}
+              onChange={(value) => handleChange("regionId", value)}
+            />
 
             <TextField
                 fullWidth

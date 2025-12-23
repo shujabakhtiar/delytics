@@ -3,11 +3,12 @@
 import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, TextField, CircularProgress, Box } from "@mui/material";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { regionResource, Region } from "../../resources/regions/regionResource";
+import { useRegion } from "../../providers/RegionProvider";
 
 export interface RegionSelectorProps {
   isFilterButton?: boolean;
-  value?: string;
-  onChange?: (value: string) => void;
+  value?: string | number;
+  onChange?: (value: string | number) => void;
   label?: string;
   fullWidth?: boolean;
 }
@@ -19,7 +20,7 @@ export default function RegionSelector({
   label = "Region",
   fullWidth = false
 }: RegionSelectorProps) {
-    const [internalRegion, setInternalRegion] = React.useState('');
+    const { selectedRegion, setRegion: setGlobalRegion } = useRegion();
     const [regionsList, setRegionsList] = React.useState<Region[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -28,7 +29,8 @@ export default function RegionSelector({
     const [hasMore, setHasMore] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     
-    const region = value !== undefined ? value : internalRegion;
+    // Determine current value: prefer local 'value' prop, fallback to global context
+    const currentValue = value !== undefined ? value : (selectedRegion?.id || '');
 
     // Fail-safe to prevent multiple concurrent requests (DDoS protection/Rate limiting)
     const isFetching = useRef(false);
@@ -97,12 +99,16 @@ export default function RegionSelector({
       }
     };
 
-    const handleChange = (event: SelectChangeEvent<string> | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const newValue = event.target.value as string;
+    const handleChange = (event: SelectChangeEvent<string | number> | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const newValue = event.target.value;
+      
       if (onChange) {
+        // Local override (e.g. in a filter modal)
         onChange(newValue);
       } else {
-        setInternalRegion(newValue);
+        // Global update (e.g. in the Navbar)
+        const selected = regionsList.find(r => r.id === Number(newValue));
+        setGlobalRegion(selected || null);
       }
     };
 
@@ -120,7 +126,7 @@ export default function RegionSelector({
           <em>None</em>
         </MenuItem>,
         ...regionsList.map((r) => (
-          <MenuItem key={r.id} value={r.name}>
+          <MenuItem key={r.id} value={r.id}>
             {r.name}
           </MenuItem>
         ))
@@ -187,7 +193,7 @@ export default function RegionSelector({
           select
           fullWidth={fullWidth}
           label={label}
-          value={region}
+          value={currentValue}
           onChange={handleChange}
           size="small"
           SelectProps={{
@@ -207,7 +213,7 @@ export default function RegionSelector({
         <Select
           labelId="region-selector-label"
           id="region-selector"
-          value={region}
+          value={currentValue}
           onChange={handleChange as any}
           label={label}
           MenuProps={menuProps as any}

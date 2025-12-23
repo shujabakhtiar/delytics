@@ -32,6 +32,7 @@ export type DeliveryFilters = {
   startDate: string;
   endDate: string;
   region: string;
+  regionId: string | number;
   hub: string;
   status: string;
   slaBreach: boolean;
@@ -41,6 +42,7 @@ const initialFilters: DeliveryFilters = {
   startDate: "",
   endDate: "",
   region: "",
+  regionId: "",
   hub: "",
   status: "",
   slaBreach: false,
@@ -63,6 +65,7 @@ export default function DeliveryFiltersModal() {
         startDate: (urlFilters.startDate as string) || "",
         endDate: (urlFilters.endDate as string) || "",
         region: (urlFilters.region as string) || "",
+        regionId: (urlFilters.regionId as string) || "",
         hub: (urlFilters.hub as string) || "",
         status: (urlFilters.status as string) || "",
         slaBreach: urlFilters.slaBreach === "true",
@@ -166,8 +169,8 @@ export default function DeliveryFiltersModal() {
                <RegionSelector
                 isFilterButton={true}
                 fullWidth
-                value={localFilters.region}
-                onChange={(value) => handleChange("region", value)}
+                value={localFilters.regionId}
+                onChange={(value) => handleChange("regionId", value)}
               />
 
               <TextField
