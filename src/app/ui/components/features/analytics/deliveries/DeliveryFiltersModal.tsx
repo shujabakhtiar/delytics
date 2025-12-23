@@ -22,9 +22,9 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { useTableFilters } from "@/app/ui/hooks/use-table-filters";
+import RegionSelector from "@/app/ui/components/common/RegionSelector";
 
 // Mock data options
-const REGIONS = ["North America", "Europe", "Asia Pacific", "Latin America", "Middle East"];
 const HUBS = ["New York", "London", "Singapore", "Tokyo", "Berlin", "Sao Paulo"];
 const STATUSES = ["PENDING", "IN_TRANSIT", "DELIVERED", "FAILED"];
 
@@ -163,25 +163,17 @@ export default function DeliveryFiltersModal() {
 
             {/* Region & Hub Section */}
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-               <TextField
-                select
+               <RegionSelector
+                isFilterButton={true}
                 fullWidth
-                label="Region"
                 value={localFilters.region}
-                onChange={(e) => handleChange("region", e.target.value)}
-                size="small"
-              >
-                <MenuItem value=""><em>None</em></MenuItem>
-                {REGIONS.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
+                onChange={(value) => handleChange("region", value)}
+              />
 
               <TextField
                 select
                 fullWidth
+
                 label="Hub"
                 value={localFilters.hub}
                 onChange={(e) => handleChange("hub", e.target.value)}

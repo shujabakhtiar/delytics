@@ -1,9 +1,25 @@
 import prisma from "@/lib/prisma";
 import { Region, RegionCreateInput } from "@/app/api/interfaces/region.interface";
+import { paginate, PaginationParams } from "../../utils/pagination";
+
+export interface RegionFilters {
+    name?: string;
+    tenantId?: number;
+}
+
 export class RegionService {
-    async getRegions() {
-        const regions = await prisma.region.findMany();
-        return regions;
+    async getRegions(filters: RegionFilters = {}, pagination: PaginationParams = { page: 1, limit: 10, skip: 0 }) {
+        const where: any = {};
+        
+        if (filters.name) where.name = { contains: filters.name, mode: 'insensitive' };
+        if (filters.tenantId) where.tenantId = filters.tenantId;
+
+        return paginate(prisma.region, {
+            where,
+            orderBy: {
+                name: 'asc'
+            }
+        }, pagination);
     }
 
     async getRegionById(id: number) {

@@ -27,9 +27,12 @@ export interface RegionFilters {
 export interface Region {
     id: number;
     name: string;
+    tenantId: number;
+    timezone: string;
+    createdAt: string;
 }
 export const regionResource = {
-    list: (filters?: RegionFilters)=>apiFetch<any>(
+    list: (filters?: RegionFilters) => apiFetch<ApiResponse<PaginatedResponse<Region>>>(
             '/region', {
                 params: filters as any,
     })

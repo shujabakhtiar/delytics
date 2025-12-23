@@ -1,6 +1,7 @@
 import { ApiResponse } from "@/app/types";
 import { NextResponse } from "next/server";
-import { RegionService, regionService } from "./region.service";
+import { RegionService, regionService, RegionFilters } from "./region.service";
+import { getPaginationParams } from "../../utils/pagination";
 
 
 export class RegionController {
@@ -43,10 +44,18 @@ export class RegionController {
 
     async getAllRegions(req: Request): Promise <NextResponse<ApiResponse<any>>> {
         try {
-            const regions = await regionService.getRegions();
+            const { searchParams } = new URL(req.url);
+            const pagination = getPaginationParams(searchParams);
+            
+            const filters: RegionFilters = {
+                name: searchParams.get('name') || undefined,
+                tenantId: searchParams.get('tenantId') ? Number(searchParams.get('tenantId')) : undefined,
+            };
+
+            const result = await regionService.getRegions(filters, pagination);
             return NextResponse.json({
                 success: true,
-                data: regions,
+                data: result,
             });
         } catch (error: any) {
             return NextResponse.json({
