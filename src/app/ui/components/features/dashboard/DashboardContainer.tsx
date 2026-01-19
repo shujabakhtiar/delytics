@@ -8,11 +8,12 @@ import {
     Divider
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
-import { KpiCard } from "@/app/ui/components/common/cards/KpiCard";
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import SpeedIcon from '@mui/icons-material/Speed';
-import HubIcon from '@mui/icons-material/Hub';
+import { 
+    TotalDeliveriesCard,
+    SlaComplianceCard,
+    AvgDeliveryTimeCard,
+    ActiveHubsCard
+} from "./widgets/KpiCards";
 import RoutedHeader from "@/app/ui/components/common/RoutedHeader";
 
 export default function DashboardContainer() {
@@ -30,40 +31,18 @@ export default function DashboardContainer() {
             <Grid container spacing={3}>
                 {/* KPI Row */}
                 <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <KpiCard 
-                        title="Total Deliveries" 
-                        value="1,284" 
-                        trend="+12.5%" 
-                        trendType="up" 
-                        icon={<LocalShippingIcon />} 
-                    />
+                    <TotalDeliveriesCard />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <KpiCard 
-                        title="SLA Compliance" 
-                        value="94.2%" 
-                        trend="-2.1%" 
-                        trendType="down" 
-                        icon={<AssessmentIcon />} 
-                    />
+                    <SlaComplianceCard />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <KpiCard 
-                        title="Avg. Delivery Time" 
-                        value="24.5 min" 
-                        trend="-1.5 min" 
-                        trendType="up" // Lower is better for time
-                        icon={<SpeedIcon />} 
-                    />
+                    <AvgDeliveryTimeCard />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <KpiCard 
-                        title="Active Hubs" 
-                        value="12" 
-                        trend="Stable" 
-                        icon={<HubIcon />} 
-                    />
+                    <ActiveHubsCard />
                 </Grid>
+
 
                 {/* Charts Section */}
                 <Grid size={{ xs: 12, lg: 8 }}>
