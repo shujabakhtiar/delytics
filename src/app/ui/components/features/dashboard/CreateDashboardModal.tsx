@@ -11,7 +11,12 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { useAuth } from '@/app/ui/providers/AuthProvider';
 
-export const CreateDashboardModal = () => {
+interface CreateDashboardModalProps {
+    trigger?: React.ReactElement;
+    onDashboardCreated?: () => void;
+}
+
+export const CreateDashboardModal = ({ trigger, onDashboardCreated }: CreateDashboardModalProps) => {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState('');
     const [loading, setLoading] = useState(false);
@@ -51,7 +56,7 @@ export const CreateDashboardModal = () => {
             if (!res.ok) throw new Error('Failed to create dashboard');
             
             handleClose();
-            // Ideally we would refresh the list here, but for now we just close
+            if (onDashboardCreated) onDashboardCreated();
         } catch (err) {
             console.error(err);
             setError('Failed to create dashboard. Please try again.');
@@ -62,13 +67,19 @@ export const CreateDashboardModal = () => {
 
     return (
         <>
-            <Button 
-                variant="contained" 
-                startIcon={<AddIcon />} 
-                onClick={handleOpen}
-            >
-                Create Dashboard
-            </Button>
+            {trigger ? (
+                React.cloneElement(trigger as any, { onClick: handleOpen })
+            ) : (
+
+                <Button 
+                    variant="contained" 
+                    startIcon={<AddIcon />} 
+                    onClick={handleOpen}
+                >
+                    Create Dashboard
+                </Button>
+            )}
+
 
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
                 <DialogTitle>Create New Dashboard</DialogTitle>
