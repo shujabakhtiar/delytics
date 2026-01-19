@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState, useCallback } from "react";
 import { 
     Box, 
@@ -6,9 +7,12 @@ import {
     Paper, 
     Typography, 
     CircularProgress,
-    Button
+    Button,
+    IconButton
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+
 import { useTheme } from '@mui/material/styles';
 import { useAuth } from "@/app/ui/providers/AuthProvider";
 import RoutedHeader from "@/app/ui/components/common/RoutedHeader";
@@ -98,7 +102,11 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                     { label: "Dashboard", href: "/dashboard" },
                     { label: dashboard?.name || 'Details', href: `/dashboard/${dashboardId}` },
                 ]}
-            />
+            >
+                <IconButton onClick={() => setIsAddWidgetModalOpen(true)}>
+                    <EditIcon />
+                </IconButton>
+            </RoutedHeader>
             
             <Grid container spacing={3}>
                 {/* KPI Row */}
@@ -128,6 +136,7 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                     // Empty state - Add Widget Placeholder
                     <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                         <Paper 
+ 
                             sx={{ 
                                 p: 2.5, 
                                 minHeight: 140, // approximate height of KpiCard
@@ -159,7 +168,9 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                 onClose={() => setIsAddWidgetModalOpen(false)} 
                 dashboardId={dashboardId}
                 onSuccess={fetchDashboard}
+                currentWidgets={kpiWidgets}
             />
+
         </Box>
     );
 }

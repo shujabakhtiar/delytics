@@ -28,7 +28,9 @@ interface AddKpiWidgetModalProps {
     onClose: () => void;
     dashboardId: number;
     onSuccess: () => void;
+    currentWidgets?: any[];
 }
+
 
 const AVAILABLE_WIDGETS = [
     { id: DashboardWidgetId.TOTAL_DELIVERIES, Component: TotalDeliveriesCard, label: "Total Deliveries" },
@@ -37,79 +39,128 @@ const AVAILABLE_WIDGETS = [
     { id: DashboardWidgetId.ACTIVE_HUBS, Component: ActiveHubsCard, label: "Active Hubs" },
 ];
 
-export const AddKpiWidgetModal = ({ open, onClose, dashboardId, onSuccess }: AddKpiWidgetModalProps) => {
+export const AddKpiWidgetModal = ({ open, onClose, dashboardId, onSuccess, currentWidgets = [] }: AddKpiWidgetModalProps) => {
     const { token } = useAuth();
     const [selectedWidgets, setSelectedWidgets] = useState<number[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // Initialize state when modal opens
+    useState(() => {
+        if (open) {
+            // Sort by position if available in currentWidgets, otherwise rely on array order
+            // We assume one widget per definition ID for now based on UI
+            const initialSelection = currentWidgets
+                .sort((a, b) => (a.position - b.position))
+                .map(w => w.queryConfig?.widgetDefinitionId)
+                .filter(id => id !== undefined);
+            
+            setSelectedWidgets(initialSelection);
+        }
+    });
+
+    // Also update when open prop changes
+    const [prevOpen, setPrevOpen] = useState(false);
+    if (open !== prevOpen) {
+        setPrevOpen(open);
+        if (open) {
+            const initialSelection = currentWidgets
+                .sort((a, b) => (a.position - b.position))
+                .map(w => w.queryConfig?.widgetDefinitionId)
+                .filter(id => id !== undefined);
+            setSelectedWidgets(initialSelection);
+        }
+    }
+
     const handleToggle = (id: number) => {
         if (selectedWidgets.includes(id)) {
-            setSelectedWidgets(prev => prev.filter(wId => wId !== id));
+            setSelectedWidgets(prev => prev.filter(wId => wId !== id));  // Remove from selection
         } else {
             if (selectedWidgets.length >= 4) return;
-            setSelectedWidgets(prev => [...prev, id]);
+            setSelectedWidgets(prev => [...prev, id]); // Add to end of selection
         }
     };
 
     const handleSubmit = async () => {
-        if (selectedWidgets.length === 0) return;
-        
         setLoading(true);
         setError(null);
 
         try {
-            // Create widgets sequentially to maintain order
-            for (let i = 0; i < selectedWidgets.length; i++) {
-                const widgetId = selectedWidgets[i];
-                
-                // Here we are creating a new DashboardWidget entry.
-                // It seems the USER wants to store the 'type' as the key to which component to render.
-                // But previously we talked about 'known int id'. 
-                // In the DetailContainer, I assumed `widget.id` mapped to the component, but `widget.id` is the DB primary key.
-                // So I need to store the "Widget Definition ID" (like TOTAL_DELIVERIES=1) somewhere. 
-                // The schema has `type`, `queryConfig`, `visualConfig`. 
-                // I will store the definition ID in `type` as a string for now, or `visualConfig`.
-                // The prompt says: "use the type to render that Kpi Card".
-                // So I will store the ID (e.g. "1", "2") in the `type` field.
-                
-                const res = await fetch('/api/dashboard-widget', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        dashboardId,
-                        type: 'kpi', // The user request says "use the type to render". But also "type must be kpi". 
-                                     // Clarification: "dashboard-widget key and type must be kpi".
-                                     // Let's store 'kpi' as type, and put the specific widget ID in queryConfig or visualConfig.
-                                     // Wait, Looking at detail container: `const WidgetComponent = WIDGET_COMPONENT_MAP[widget.id];`
-                                     // That logic was flawed because widget.id is auto-increment.
-                                     // I will fix DetailContainer to look at `visualConfig.widgetId` or similar.
-                                     // For now, let's store it in `queryConfig` as `widgetDefinitionId`.
-                                     
-                        queryConfig: { widgetDefinitionId: widgetId }, 
-                        visualConfig: {},
-                        position: i
-                    })
-                });
+            // 1. Identify widgets to delete (in currentWidgets but not in selectedWidgets)
+             const widgetsToDelete = currentWidgets.filter(w => 
+                !selectedWidgets.includes(w.queryConfig?.widgetDefinitionId)
+            );
 
-                if (!res.ok) {
-                    throw new Error('Failed to create widget');
+            // 2. Identify widgets to create (in selectedWidgets but not in currentWidgets)
+             // Actually, to support reordering, and simplicity, and since we don't have a huge number of widgets:
+             // We could delete deleted ones, and update positions of existing ones. But simpler might be to upsert or just manage list.
+             // Given the constraints and likely low volume, let's do:
+             // - DELETE widgets no longer selected.
+             // - CREATE widgets newly selected.
+             // - UPDATE positions of kept widgets to match new order.
+             
+             // However, `selectedWidgets` is just an array of definition IDs. The diff logic:
+             
+             // Helper to find existing widget by definition ID
+             const findExisting = (defId: number) => currentWidgets.find(w => w.queryConfig?.widgetDefinitionId === defId);
+
+            // Delete removed widgets
+            for (const w of widgetsToDelete) {
+                await fetch(`/api/dashboard-widget?id=${w.id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+            }
+
+            // Upsert / Update positions
+            for (let i = 0; i < selectedWidgets.length; i++) {
+                const defId = selectedWidgets[i];
+                const existing = findExisting(defId);
+
+                if (existing) {
+                    // Update position if changed
+                    if (existing.position !== i) {
+                        await fetch('/api/dashboard-widget', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                             body: JSON.stringify({
+                                 id: existing.id,
+                                 position: i
+                             })
+                        });
+                    }
+                } else {
+                    // Create new
+                     await fetch('/api/dashboard-widget', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            dashboardId,
+                            type: 'kpi',
+                            queryConfig: { widgetDefinitionId: defId },
+                            visualConfig: {},
+                            position: i
+                        })
+                    });
                 }
             }
             
             onSuccess();
             onClose();
-            setSelectedWidgets([]);
         } catch (err) {
             console.error(err);
-            setError('Failed to add widgets. Please try again.');
+            setError('Failed to update widgets. Please try again.');
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -160,10 +211,11 @@ export const AddKpiWidgetModal = ({ open, onClose, dashboardId, onSuccess }: Add
                 <Button 
                     onClick={handleSubmit} 
                     variant="contained" 
-                    disabled={selectedWidgets.length === 0 || loading}
+                    disabled={loading}
                 >
-                    {loading ? <CircularProgress size={24} /> : `Add ${selectedWidgets.length} Widget(s)`}
+                    {loading ? <CircularProgress size={24} /> : 'Save'}
                 </Button>
+
             </DialogActions>
         </Dialog>
     );
