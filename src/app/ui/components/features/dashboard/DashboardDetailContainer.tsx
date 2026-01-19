@@ -1,6 +1,5 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { 
     Box, 
     Grid, 
@@ -20,6 +19,7 @@ import {
     ActiveHubsCard 
 } from "./widgets/KpiCards";
 import { DashboardWidgetId } from "./widgets/widgetIds";
+import { AddKpiWidgetModal } from "./AddKpiWidgetModal";
 
 // Map of widget IDs to components
 const WIDGET_COMPONENT_MAP: Record<number, React.ComponentType> = {
@@ -39,39 +39,38 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
     const [dashboard, setDashboard] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] = useState(false);
 
-    useEffect(() => {
-        const fetchDashboard = async () => {
-            if (!token) return;
-            try {
-                const res = await fetch(`/api/dashboard?id=${dashboardId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    setDashboard(data.data);
-                } else {
-                    setError(data.error || 'Failed to fetch dashboard');
+    const fetchDashboard = useCallback(async () => {
+        if (!token) return;
+        setLoading(true);
+        try {
+            const res = await fetch(`/api/dashboard?id=${dashboardId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
                 }
-            } catch (err) {
-                setError('An error occurred while fetching dashboard');
-            } finally {
-                setLoading(false);
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                setDashboard(data.data);
+            } else {
+                setError(data.error || 'Failed to fetch dashboard');
             }
-        };
-
-        if (token) {
-            fetchDashboard();
-        } else {
-            // Should probably redirect or show loading until auth is ready
-           // But dependent on AuthProvider logic
+        } catch (err) {
+            setError('An error occurred while fetching dashboard');
+        } finally {
+            setLoading(false);
         }
     }, [dashboardId, token]);
 
-    if (loading) {
+    useEffect(() => {
+        if (token) {
+            fetchDashboard();
+        }
+    }, [fetchDashboard, token]);
+
+    if (loading && !dashboard) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <CircularProgress />
@@ -79,7 +78,7 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
         );
     }
 
-    if (error || !dashboard) {
+    if (error && !dashboard) {
         return (
             <Box sx={{ p: 4 }}>
                 <Typography color="error">{error || 'Dashboard not found'}</Typography>
@@ -87,17 +86,17 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
         );
     }
 
-    const kpiWidgets = dashboard.widgets?.filter((w: any) => w.type === 'kpi') || [];
+    const kpiWidgets = dashboard?.widgets?.filter((w: any) => w.type === 'kpi') || [];
 
     return (
         <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: 'background.default', minHeight: '100%' }}>
             {/* Header Section */}
             <RoutedHeader 
-                title={dashboard.name}
+                title={dashboard?.name || 'Dashboard'}
                 routedLinks={[
                     { label: "Delytics", href: "/" },
                     { label: "Dashboard", href: "/dashboard" },
-                    { label: dashboard.name, href: `/dashboard/${dashboardId}` },
+                    { label: dashboard?.name || 'Details', href: `/dashboard/${dashboardId}` },
                 ]}
             />
             
@@ -105,17 +104,10 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                 {/* KPI Row */}
                 {kpiWidgets.length > 0 ? (
                     kpiWidgets.map((widget: any) => {
-                        // Assuming widget.id or some field maps to our known IDs. 
-                        // The user said "give them a known int id. this should correspond with dashboardwidget in schema.prisma"
-                        // But in the DB, the ID is autoincremented. 
-                        // The user might have meant the *type* or a specific config ID.
-                        // However, given the instruction "known int id... correspond with dashboardwidget", 
-                        // I will assume for now we might map by ID if seeded, or maybe I should use `position` or just render distinct ones.
-                        // actually the user previously asked to export constants like WIDGET_ID_TOTAL_DELIVERIES = 1.
-                        // And in schema, DashboardWidget has an ID. 
-                        // So if the DB row has id=1, it renders TotalDeliveriesCard.
+                        // Use the stored widgetDefinitionId from queryConfig to find the correct component
+                        const widgetDefId = widget.queryConfig?.widgetDefinitionId;
+                        const WidgetComponent = widgetDefId ? WIDGET_COMPONENT_MAP[widgetDefId] : null;
                         
-                        const WidgetComponent = WIDGET_COMPONENT_MAP[widget.id];
                         if (WidgetComponent) {
                             return (
                                 <Grid key={widget.id} size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -127,7 +119,7 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                         return (
                             <Grid key={widget.id} size={{ xs: 12, sm: 6, lg: 3 }}>
                                 <Paper sx={{ p: 2.5, minHeight: 140, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Typography color="text.secondary">Unknown Widget {widget.id}</Typography>
+                                    <Typography color="text.secondary">Unknown Widget {widgetDefId}</Typography>
                                 </Paper>
                             </Grid>
                         );
@@ -151,6 +143,7 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                                     bgcolor: 'action.hover'
                                 }
                             }}
+                            onClick={() => setIsAddWidgetModalOpen(true)}
                         >
                             <AddIcon color="action" sx={{ fontSize: 40, mb: 1 }} />
                             <Typography color="text.secondary" fontWeight={500}>
@@ -160,6 +153,14 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                     </Grid>
                 )}
             </Grid>
+
+            <AddKpiWidgetModal 
+                open={isAddWidgetModalOpen} 
+                onClose={() => setIsAddWidgetModalOpen(false)} 
+                dashboardId={dashboardId}
+                onSuccess={fetchDashboard}
+            />
         </Box>
     );
 }
+
