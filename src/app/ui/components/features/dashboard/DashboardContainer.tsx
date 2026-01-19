@@ -15,6 +15,7 @@ import {
     RegionSlaChart
 } from "./widgets/Charts";
 import RoutedHeader from "@/app/ui/components/common/RoutedHeader";
+import { CreateDashboardModal } from "./CreateDashboardModal";
 
 export default function DashboardContainer() {
     const theme = useTheme();
@@ -27,8 +28,12 @@ export default function DashboardContainer() {
                 routedLinks={[
                     { label: "Delytics", href: "/" },
                     { label: "Dashboard", href: "/dashboard" },
-                ]}/>
+                ]}
+            >
+                <CreateDashboardModal />
+            </RoutedHeader>
             <Grid container spacing={3}>
+
                 {/* KPI Row */}
                 <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                     <TotalDeliveriesCard />
