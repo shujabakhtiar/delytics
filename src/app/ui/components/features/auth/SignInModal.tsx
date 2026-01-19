@@ -59,12 +59,12 @@ export const SignInModal: React.FC<SignInModalProps> = ({ open, onClose }) => {
     }
   };
 
-  const handleQuickLogin = async () => {
+  const handleQuickLogin = async (demoEmail: string, demoPass: string) => {
     setError(null);
     setLoading(true);
 
     try {
-      const response = await authResource.login('aaron.smith@delytics.com', 'password');
+      const response = await authResource.login(demoEmail, demoPass);
       if (response.success) {
         login(response.data.user, response.data.token);
         onClose();
@@ -77,6 +77,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ open, onClose }) => {
       setLoading(false);
     }
   };
+
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -135,36 +136,104 @@ export const SignInModal: React.FC<SignInModalProps> = ({ open, onClose }) => {
           </Box>
 
           {/* Right: Quick Login options */}
-          <Box sx={{ width: 300, bgcolor: 'action.hover', p: 4 }}>
+          <Box sx={{ width: 300, bgcolor: 'action.hover', p: 4, display: 'flex', flexDirection: 'column' }}>
             <Typography variant="h6" fontWeight={600} gutterBottom>
               Quick Demo Access
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Use the button below to instantly explore the dashboard with Super Admin privileges.
+              Select a profile to explore the platform with specific privileges.
             </Typography>
             
-            <Button 
-              fullWidth
-              variant="outlined"
-              onClick={handleQuickLogin}
-              disabled={loading}
-              startIcon={<AdminPanelSettingsIcon />}
-              sx={{ 
-                py: 2, 
-                borderRadius: 2, 
-                fontWeight: 700,
-                bgcolor: 'background.paper',
-                borderWidth: 2,
-                '&:hover': {
-                  borderWidth: 2,
-                  bgcolor: 'primary.main',
-                  color: 'white'
-                }
-              }}
-            >
-              Super Admin View
-            </Button>
+            <Stack spacing={2} sx={{ flex: 1 }}>
+                <Button 
+                  fullWidth
+                  variant="outlined"
+                  onClick={() => handleQuickLogin('aaron.smith@delytics.com', 'password')}
+                  disabled={loading}
+                  startIcon={<AdminPanelSettingsIcon />}
+                  sx={{ 
+                    py: 1.5, 
+                    borderRadius: 2, 
+                    fontWeight: 700,
+                    bgcolor: 'background.paper',
+                    justifyContent: 'flex-start',
+                    borderWidth: 1,
+                    borderColor: 'divider',
+                    color: 'text.primary',
+                    '&:hover': {
+                      borderWidth: 1,
+                      bgcolor: 'primary.soft',
+                      borderColor: 'primary.main',
+                      color: 'primary.main'
+                    }
+                  }}
+                >
+                  <Box sx={{ textAlign: 'left' }}>
+                      <Typography variant="subtitle2" lineHeight={1.2}>Super Admin</Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.8 }}>Full System Access</Typography>
+                  </Box>
+                </Button>
+
+                <Button 
+                  fullWidth
+                  variant="outlined"
+                  onClick={() => handleQuickLogin('sarah.connor@delytics.com', 'password')}
+                  disabled={loading}
+                  startIcon={<WarehouseIcon />}
+                  sx={{ 
+                    py: 1.5, 
+                    borderRadius: 2, 
+                    fontWeight: 700,
+                    bgcolor: 'background.paper',
+                    justifyContent: 'flex-start',
+                    borderWidth: 1,
+                    borderColor: 'divider',
+                    color: 'text.primary',
+                    '&:hover': {
+                      borderWidth: 1,
+                      bgcolor: 'info.soft',
+                      borderColor: 'info.main',
+                      color: 'info.main'
+                    }
+                  }}
+                >
+                   <Box sx={{ textAlign: 'left' }}>
+                      <Typography variant="subtitle2" lineHeight={1.2}>Regional Admin</Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.8 }}>Region Management</Typography>
+                  </Box>
+                </Button>
+
+                <Button 
+                  fullWidth
+                  variant="outlined"
+                  onClick={() => handleQuickLogin('mike.ross@delytics.com', 'password')}
+                  disabled={loading}
+                  startIcon={<AnalyticsIcon />}
+                  sx={{ 
+                    py: 1.5, 
+                    borderRadius: 2, 
+                    fontWeight: 700,
+                    bgcolor: 'background.paper',
+                    justifyContent: 'flex-start',
+                    borderWidth: 1,
+                    borderColor: 'divider',
+                    color: 'text.primary',
+                    '&:hover': {
+                      borderWidth: 1,
+                      bgcolor: 'secondary.soft',
+                      borderColor: 'secondary.main',
+                      color: 'secondary.main'
+                    }
+                  }}
+                >
+                   <Box sx={{ textAlign: 'left' }}>
+                      <Typography variant="subtitle2" lineHeight={1.2}>Data Analyst</Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.8 }}>Reports & Insights</Typography>
+                  </Box>
+                </Button>
+            </Stack>
           </Box>
+
         </Stack>
       </DialogContent>
       
