@@ -16,12 +16,15 @@ interface CreateDashboardModalProps {
     onDashboardCreated?: () => void;
 }
 
+import { useRouter } from 'next/navigation';
+
 export const CreateDashboardModal = ({ trigger, onDashboardCreated }: CreateDashboardModalProps) => {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { user, token } = useAuth();
+    const router = useRouter();
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
@@ -54,9 +57,16 @@ export const CreateDashboardModal = ({ trigger, onDashboardCreated }: CreateDash
             });
 
             if (!res.ok) throw new Error('Failed to create dashboard');
+
+            const response = await res.json();
             
             handleClose();
             if (onDashboardCreated) onDashboardCreated();
+            
+            if (response.success && response.data?.id) {
+                // Redirect to the new dashboard page
+                router.push(`/dashboard/${response.data.id}`);
+            }
         } catch (err) {
             console.error(err);
             setError('Failed to create dashboard. Please try again.');
