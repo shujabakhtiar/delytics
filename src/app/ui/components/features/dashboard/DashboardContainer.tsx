@@ -12,13 +12,35 @@ import {
 } from "./widgets/KpiCards";
 import {
     DeliveriesOverTimeChart,
-    RegionSlaChart
+    RegionSlaChart,
+    AgentActivityChart,
+    RevenueCostChart
 } from "./widgets/Charts";
 import RoutedHeader from "@/app/ui/components/common/RoutedHeader";
 import { CreateDashboardModal } from "./CreateDashboardModal";
+import { AddLineChart } from "./AddLineChart";
+import { DashboardWidgetId } from "./widgets/widgetIds";
+import { useState } from "react";
+import { Button, IconButton, Stack, Typography } from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
 
 export default function DashboardContainer() {
     const theme = useTheme();
+    const [selectedWideChart, setSelectedWideChart] = useState<DashboardWidgetId>(DashboardWidgetId.DELIVERIES_OVER_TIME);
+    const [isAddChartOpen, setIsAddChartOpen] = useState(false);
+
+    const renderWideChart = () => {
+        switch (selectedWideChart) {
+            case DashboardWidgetId.DELIVERIES_OVER_TIME:
+                return <DeliveriesOverTimeChart />;
+            case DashboardWidgetId.AGENT_ACTIVITY:
+                return <AgentActivityChart />;
+            case DashboardWidgetId.REVENUE_VS_COST:
+                return <RevenueCostChart />;
+            default:
+                return <DeliveriesOverTimeChart />;
+        }
+    };
 
     return (
         <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: 'background.default', minHeight: '100%' }}>
@@ -51,13 +73,34 @@ export default function DashboardContainer() {
 
                 {/* Charts Section */}
                 <Grid size={{ xs: 12, lg: 8 }}>
-                    <DeliveriesOverTimeChart />
+                     <Box sx={{ position: 'relative', height: '100%' }}>
+                         {/* Edit/Change Button overlay or header action */}
+                         <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
+                            <Button 
+                                startIcon={<EditIcon />} 
+                                size="small" 
+                                variant="outlined" 
+                                onClick={() => setIsAddChartOpen(true)}
+                                sx={{ bgcolor: 'background.paper' }}
+                            >
+                                Change Chart
+                            </Button>
+                         </Box>
+                        {renderWideChart()}
+                     </Box>
                 </Grid>
 
                 <Grid size={{ xs: 12, lg: 4 }}>
                     <RegionSlaChart />
                 </Grid>
             </Grid>
+            
+            <AddLineChart 
+                open={isAddChartOpen} 
+                onClose={() => setIsAddChartOpen(false)} 
+                onSelect={(id) => setSelectedWideChart(id)}
+                currentChartId={selectedWideChart}
+            />
         </Box>
     );
 }
