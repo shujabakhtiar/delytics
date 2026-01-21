@@ -14,11 +14,14 @@ import {
     DeliveriesOverTimeChart,
     RegionSlaChart,
     AgentActivityChart,
-    RevenueCostChart
+    RevenueCostChart,
+    DeliveryStatusChart,
+    FleetUtilizationChart
 } from "./widgets/Charts";
 import RoutedHeader from "@/app/ui/components/common/RoutedHeader";
 import { CreateDashboardModal } from "./CreateDashboardModal";
 import { AddLineChart } from "./AddLineChart";
+import { AddSideChart } from "./AddSideChart";
 import { DashboardWidgetId } from "./widgets/widgetIds";
 import { useState } from "react";
 import { Button, IconButton, Stack, Typography } from "@mui/material";
@@ -27,7 +30,9 @@ import EditIcon from '@mui/icons-material/Edit';
 export default function DashboardContainer() {
     const theme = useTheme();
     const [selectedWideChart, setSelectedWideChart] = useState<DashboardWidgetId>(DashboardWidgetId.DELIVERIES_OVER_TIME);
+    const [selectedSideChart, setSelectedSideChart] = useState<DashboardWidgetId>(DashboardWidgetId.REGION_SLA);
     const [isAddChartOpen, setIsAddChartOpen] = useState(false);
+    const [isAddSideChartOpen, setIsAddSideChartOpen] = useState(false);
 
     const renderWideChart = () => {
         switch (selectedWideChart) {
@@ -39,6 +44,19 @@ export default function DashboardContainer() {
                 return <RevenueCostChart />;
             default:
                 return <DeliveriesOverTimeChart />;
+        }
+    };
+
+    const renderSideChart = () => {
+        switch (selectedSideChart) {
+            case DashboardWidgetId.REGION_SLA:
+                return <RegionSlaChart />;
+            case DashboardWidgetId.DELIVERY_STATUS:
+                return <DeliveryStatusChart />;
+            case DashboardWidgetId.FLEET_UTILIZATION:
+                return <FleetUtilizationChart />;
+            default:
+                return <RegionSlaChart />;
         }
     };
 
@@ -91,7 +109,21 @@ export default function DashboardContainer() {
                 </Grid>
 
                 <Grid size={{ xs: 12, lg: 4 }}>
-                    <RegionSlaChart />
+                     <Box sx={{ position: 'relative', height: '100%' }}>
+                         {/* Edit/Change Button for Side Chart */}
+                         <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
+                            <Button 
+                                startIcon={<EditIcon />} 
+                                size="small" 
+                                variant="outlined" 
+                                onClick={() => setIsAddSideChartOpen(true)}
+                                sx={{ bgcolor: 'background.paper' }}
+                            >
+                                Change Chart
+                            </Button>
+                         </Box>
+                        {renderSideChart()}
+                     </Box>
                 </Grid>
             </Grid>
             
@@ -100,6 +132,13 @@ export default function DashboardContainer() {
                 onClose={() => setIsAddChartOpen(false)} 
                 onSelect={(id) => setSelectedWideChart(id)}
                 currentChartId={selectedWideChart}
+            />
+
+            <AddSideChart 
+                open={isAddSideChartOpen} 
+                onClose={() => setIsAddSideChartOpen(false)} 
+                onSelect={(id) => setSelectedSideChart(id)}
+                currentChartId={selectedSideChart}
             />
         </Box>
     );
