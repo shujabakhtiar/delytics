@@ -199,7 +199,7 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                         <Paper 
                             sx={{ 
                                 p: 2.5, 
-                                minHeight: 140, // approximate height of KpiCard
+                                height: 118, // Matches approx height of KpiCard
                                 display: 'flex', 
                                 flexDirection: 'column',
                                 alignItems: 'center', 
@@ -214,8 +214,8 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                             }}
                             onClick={() => setIsAddWidgetModalOpen(true)}
                         >
-                            <AddIcon color="action" sx={{ fontSize: 40, mb: 1 }} />
-                            <Typography color="text.secondary" fontWeight={500}>
+                            <AddIcon color="action" sx={{ fontSize: 32, mb: 0.5 }} />
+                            <Typography color="text.secondary" fontWeight={500} variant="body2">
                                 Add KPI Widget
                             </Typography>
                         </Paper>
