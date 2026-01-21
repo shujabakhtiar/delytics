@@ -5,5 +5,7 @@ export enum DashboardWidgetId {
     ACTIVE_HUBS = 4,
     DELIVERIES_OVER_TIME = 5,
     REGION_SLA = 6,
+    AGENT_ACTIVITY = 7,
+    REVENUE_VS_COST = 8,
 }
 
