@@ -22,8 +22,16 @@ import {
     AvgDeliveryTimeCard, 
     ActiveHubsCard 
 } from "./widgets/KpiCards";
+import {
+    DeliveriesOverTimeChart,
+    AgentActivityChart,
+    RevenueCostChart,
+    RegionSlaChart
+} from "./widgets/Charts";
+
 import { DashboardWidgetId } from "./widgets/widgetIds";
 import { AddKpiWidgetModal } from "./AddKpiWidgetModal";
+import { AddLineChart } from "./AddLineChart";
 
 // Map of widget IDs to components
 const WIDGET_COMPONENT_MAP: Record<number, React.ComponentType> = {
@@ -31,6 +39,10 @@ const WIDGET_COMPONENT_MAP: Record<number, React.ComponentType> = {
     [DashboardWidgetId.SLA_COMPLIANCE]: SlaComplianceCard,
     [DashboardWidgetId.AVG_DELIVERY_TIME]: AvgDeliveryTimeCard,
     [DashboardWidgetId.ACTIVE_HUBS]: ActiveHubsCard,
+    [DashboardWidgetId.DELIVERIES_OVER_TIME]: DeliveriesOverTimeChart,
+    [DashboardWidgetId.AGENT_ACTIVITY]: AgentActivityChart,
+    [DashboardWidgetId.REVENUE_VS_COST]: RevenueCostChart,
+    [DashboardWidgetId.REGION_SLA]: RegionSlaChart,
 };
 
 interface DashboardDetailContainerProps {
@@ -44,6 +56,7 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] = useState(false);
+    const [isAddLineChartOpen, setIsAddLineChartOpen] = useState(false);
 
     const fetchDashboard = useCallback(async () => {
         if (!token) return;
@@ -74,6 +87,48 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
         }
     }, [fetchDashboard, token]);
 
+    const handleLineChartSave = async (chartId: DashboardWidgetId) => {
+        try {
+            // Check if existing line chart widget exists
+            const existingWidget = dashboard?.widgets?.find((w: any) => w.type === 'line-chart');
+
+            if (existingWidget) {
+                // Update
+                await fetch('/api/dashboard-widget', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        id: existingWidget.id,
+                        queryConfig: { widgetDefinitionId: chartId }
+                    })
+                });
+            } else {
+                // Create
+                await fetch('/api/dashboard-widget', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        dashboardId,
+                        type: 'line-chart',
+                        queryConfig: { widgetDefinitionId: chartId },
+                        visualConfig: {},
+                        position: 0 
+                    })
+                });
+            }
+            fetchDashboard();
+        } catch (err) {
+            console.error(err);
+            // Handle error (maybe toast)
+        }
+    };
+
     if (loading && !dashboard) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -91,6 +146,12 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
     }
 
     const kpiWidgets = dashboard?.widgets?.filter((w: any) => w.type === 'kpi') || [];
+    const lineChartWidget = dashboard?.widgets?.find((w: any) => w.type === 'line-chart');
+    
+    // Resolve the component for the line chart
+    const LineChartComponent = lineChartWidget?.queryConfig?.widgetDefinitionId 
+        ? WIDGET_COMPONENT_MAP[lineChartWidget.queryConfig.widgetDefinitionId] 
+        : null;
 
     return (
         <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: 'background.default', minHeight: '100%' }}>
@@ -108,8 +169,8 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                 </IconButton>
             </RoutedHeader>
             
-            <Grid container spacing={3}>
-                {/* KPI Row */}
+            {/* KPI Section */}
+            <Grid container spacing={3} sx={{ mb: 3 }}>
                 {kpiWidgets.length > 0 ? (
                     kpiWidgets.map((widget: any) => {
                         // Use the stored widgetDefinitionId from queryConfig to find the correct component
@@ -133,10 +194,9 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                         );
                     })
                 ) : (
-                    // Empty state - Add Widget Placeholder
+                    // Empty state - Add Widget Placeholder (Takes up first slot)
                     <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                         <Paper 
- 
                             sx={{ 
                                 p: 2.5, 
                                 minHeight: 140, // approximate height of KpiCard
@@ -163,6 +223,61 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                 )}
             </Grid>
 
+            {/* Charts Section */}
+            <Grid container spacing={3}>
+                {/* Wide Chart Section */}
+                <Grid size={{ xs: 12, lg: 8 }}>
+                    {LineChartComponent ? (
+                     <Box sx={{ position: 'relative', height: '100%', minHeight: 400 }}>
+                         {/* Edit/Change Button for Chart */}
+                         <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
+                            <Button 
+                                startIcon={<EditIcon />} 
+                                size="small" 
+                                variant="outlined" 
+                                onClick={() => setIsAddLineChartOpen(true)}
+                                sx={{ bgcolor: 'background.paper' }}
+                            >
+                                Change Chart
+                            </Button>
+                         </Box>
+                        
+                         <LineChartComponent />
+                     </Box>
+                    ) : (
+                         // Placeholder if no chart selected
+                         <Paper 
+                            sx={{ 
+                                height: '100%', 
+                                minHeight: 400,
+                                display: 'flex', 
+                                flexDirection: 'column',
+                                alignItems: 'center', 
+                                justifyContent: 'center',
+                                border: '2px dashed',
+                                borderColor: 'divider',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    borderColor: 'primary.main',
+                                    bgcolor: 'action.hover'
+                                }
+                            }}
+                            onClick={() => setIsAddLineChartOpen(true)}
+                        >
+                            <AddIcon color="action" sx={{ fontSize: 40, mb: 1 }} />
+                            <Typography color="text.secondary" fontWeight={500}>
+                                Add Chart
+                            </Typography>
+                        </Paper>
+                    )}
+                </Grid>
+
+                {/* Region SLA */}
+                <Grid size={{ xs: 12, lg: 4 }}>
+                    <RegionSlaChart />
+                </Grid>
+            </Grid>
+
             <AddKpiWidgetModal 
                 open={isAddWidgetModalOpen} 
                 onClose={() => setIsAddWidgetModalOpen(false)} 
@@ -170,8 +285,16 @@ export default function DashboardDetailContainer({ dashboardId }: DashboardDetai
                 onSuccess={fetchDashboard}
                 currentWidgets={kpiWidgets}
             />
+            
+            <AddLineChart 
+                open={isAddLineChartOpen} 
+                onClose={() => setIsAddLineChartOpen(false)} 
+                onSelect={handleLineChartSave}
+                currentChartId={lineChartWidget?.queryConfig?.widgetDefinitionId || null}
+            />
 
         </Box>
     );
 }
+
 
