@@ -4,7 +4,7 @@ type HttpRequestOptions = RequestInit & {
   params?: Record<string, string | number | boolean | undefined>;
 };
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function apiFetch<T>(endpoint: string, options: HttpRequestOptions = {}): Promise<T> {
   const { params, ...customConfig } = options;

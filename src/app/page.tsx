@@ -9,9 +9,12 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid'; // Note: Grid version 2 is often default in newer MUI but standard Grid is fine. Using Box/Stack is safer.
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useTheme } from '@mui/material/styles';
+import { useState } from 'react';
+import { SignInModal } from './ui/components/features/auth/SignInModal';
 
 export default function Home() {
   const theme = useTheme();
+  const [signInOpen, setSignInOpen] = useState(false);
 
   return (
     <Box
@@ -69,19 +72,20 @@ export default function Home() {
                 variant="contained" 
                 size="large" 
                 endIcon={<ArrowForwardIcon />}
-                href="#"
+              onClick={() => setSignInOpen(true)}
                 sx={{ px: 4, py: 1.5, fontSize: '1rem' }}
             >
               Get Started
             </Button>
-            <Button 
+            {/* <Button 
                 variant="outlined" 
                 size="large"
                 href="#features"
                 sx={{ px: 4, py: 1.5, fontSize: '1rem', backgroundColor: theme.palette.background.paper }}
             >
               Learn More
-            </Button>
+            </Button> */}
+            <SignInModal open={signInOpen} onClose={() => setSignInOpen(false)} />
           </Stack>
           
           {/* Dashboard Preview / Trust Section */}
