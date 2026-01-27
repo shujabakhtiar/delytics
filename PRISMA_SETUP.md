@@ -109,7 +109,11 @@ const users = await prisma.user.findMany();
 npm install prisma @prisma/client @prisma/adapter-pg pg
 npm install --save-dev @types/pg
 
-# 2. Initialize Prisma (creates schema and config)
+# 2. Add postinstall script to package.json
+# Ensure Prisma Client is generated on deployment (e.g., Vercel)
+# "scripts": { "postinstall": "prisma generate" }
+
+# 3. Initialize Prisma (creates schema and config)
 npx prisma init
 
 # 3. Generate Prisma Client
