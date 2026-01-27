@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Agents from "@/app/ui/components/features/analytics/agents/Agents";
 
 export const metadata = {
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function AgentsPage() {
-  return <Agents />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Agents />
+    </Suspense>
+  );
 }
